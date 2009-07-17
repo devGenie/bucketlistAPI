@@ -57,6 +57,7 @@ class Users(db.Model):
 	def add_bucket_list(self,name,description):
 		bucketlist=Bucketlists(name=name,description=description)
 		self.bucketlists.append(bucketlist)
+		db.session.commit()
 
 
 	def __repr__(self):
