@@ -1,12 +1,12 @@
 ## BUCKET LIST ## 
 A bucketlist is a list of things you wish to do before you go ghost. This application a REATFUL webservice to help you keep track of ypur life goals. Have a blast and dont forget to make this world a better place, save the trees.
 
-** Installation **
+**Installation**
 ```	$ git clone https://github.com/devGenie/bucketlistAPI.git
 	$ cd bucketlistAPI
 	$ git pull master
 ```
-*** Install the virtual environment ***
+**Install the virtual environment**
 ```$ pip install virtualenv
    $ pip install virtualenvwrapper
    $ export WORKHOME=~/Envs
@@ -14,17 +14,14 @@ A bucketlist is a list of things you wish to do before you go ghost. This applic
    $ mkvirtualenv bucketlistAPI
    $ workon bucketlist
 ```
+**Install the requirements**
 
-install the requirements
-
-```
-	$ pip install requirements.txt
+```	$ pip install requirements.txt
 ```
 
 OR
 
-```
-	$ pip install --upgrade -r requirements.txt
+```$ pip install --upgrade -r requirements.txt
 ```
 
 Provide the flask application environment variable
@@ -36,4 +33,5 @@ Provide the flask application environment variable
 run the flask server
 
 ```
-	$ f
+	$ flask run
+```
