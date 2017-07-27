@@ -25,12 +25,12 @@ class StagingConfig(Config):
 	"""Configurations for staging"""
 	DEBUG = True
 
- class ProductionConfig(object):
+class ProductionConfig(object):
  	"""configuration for production"""
  	DEBUG = False
  	Testing = False
 
- app_config = {
+app_config = {
  	'development': DevelopmentConfig,
  	'testing': TestingConfig,
  	'staging': StagingConfig,
