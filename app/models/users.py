@@ -1,6 +1,7 @@
 from app import db
 
 class Users(db.Model):
+	"""This class represents the user table"""
 	__tablename__ = "users"
 	id=db.Column(db.Integer,primary_key = True)
 	first_name=db.Column(db.String(20),nullable=False)
@@ -15,12 +16,19 @@ class Users(db.Model):
 		self.email=email
 
 	def save(self):
+		"""This method adds the record to the users table"""
 		db.session.add(self)
 		db.session.commit()
 
 	def delete(self):
+		"""This method deletes the record from the user's table"""
 		db.session.delete(self)
 		db.session.commit()
 
 	def __repr__(self):
 		return {"user_id":self.id,"email":self.email,"first_name":self.first_name,"last_name":self.last_name}
+
+	@staticmethod
+	def get_all():
+		"""This method returns all users in the table"""
+		return Users.query.all()
