@@ -1,12 +1,12 @@
 from app import db
 
-class Bucketlists(db.Models):
+class Bucketlists(db.Model):
 	"""This class models the bucketlist table"""
 	__tablename__ = "bucketlists"
 	id=db.Column(db.Integer,primary_key = True)
 	name=db.Column(db.String(20),nullable=False)
 	description = db.Column(db.String(150),nullable=True)
-	user=db.Column(db.Integer,db.ForeignKey("user.id"),nullable=False)
+	user=db.Column(db.Integer,db.ForeignKey("users.id"),nullable=False)
 	items=db.relationship("BucketlistItems",backref="bucketlists",lazy=True)
 
 	def __init__(self,name,description=""):
