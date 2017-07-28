@@ -16,9 +16,5 @@ before_script:
 
 # command to run tests
 script: 
-  - source .env
-  - python manage.py db init
-  - python manage.py db migrate
-  - python manage.py db upgrade
   - nosetests --with-coverage
 after_success: coveralls
