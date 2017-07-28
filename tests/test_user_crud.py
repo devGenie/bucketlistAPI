@@ -14,19 +14,67 @@ class TestUserCrud(unittest.TestCase):
 		with self.app.app_context() #associate the app with the current context
 			db.create_all() #creates all required tables
 			self.test_user={"first_name":"Onen","last_name":"Julius","email":"jonen54@gmail.com","password":"256thjuly"}
+			self.login_data={"email":"jonen54@gmail.com","password":"256thjuly"}
 
 	def test_user_is_created(self):
+		""" Test if a user is created """
 		result=self.client().post("/auth/register",data=self.test_user)
 		self.assertEqual(res.status_code,201)
 		self.assertDictEqual(res.data,{"status":"success","message":"User registered successfully"},"User registration failed")
 
+	def test_duplicate_user_is_created(self):
+		""" Test if a user is created """
+		result=self.client().post("/auth/register",data=self.test_user)
+		self.assertEqual(res.status_code,201)
+		duplicate=self.client().post("/auth/register",data=self.test_user)
+		self.assertEqual(duplicate.status_code,409,"Duplicates are being added to the db")
+		self.assertDictEqual(res.data,{"status":"success","message":"User registered successfully"},"User registration failed")
+
+
 	def test_user_logs_in(self):
+		"""Test if a user is able to login successfully"""
 		result=self.client().post("/auth/register",data=self.test_user)
 		self.assertEqual(result.status_code,201,"User not registered")
-		login_data={"email":"jonen54@gmail.com","password":"256thjuly"}
-		login=self.client().post("/auth/login",login_data)
+		login=self.client().post("/auth/login",data=self.login_data)
 		self.assertEqual(login.status_code,201,"User not logged in")
 		self.assertDictEqual(login.data,{"status":"success","message":"Login was successful"},"User failed to login")
+
+	def test_user_logs_out(self):
+		"""Test if a user is able to logout"""
+		result=self.client().post("/auth/register",data=self.test_user)
+		self.assertEqual(res.status_code,201,"user not registered successfully")
+		login=self.client().post("/auth/login",data=self.login_data)
+		self.assertEqual(login.status_code,201,"User login failed")
+		logout=self.client().get("/auth/logout")
+		self.assertEqual(logout.status_code,200,"User logged out successfully")
+		self.assertDictEqual(logout.data,{"status":"successful","message":"User logged out successfully"})
+
+	def test_user_reset_password(self):
+		"""testing if user is able to reset password"""
+		result=self.client().post("/auth/register",data=self.test_user)
+		self.assertEqual(res.status_code,201,"user not registered successfully")
+		login=self.client().post("/auth/login",data=self.login_data)
+		self.assertEqual(login.status_code,201,"User login failed")
+		reset_data={"old_password":"256thjuly","new_password":"257thjuly"}
+		reset_password=self.client().post("/auth/password_rest",data=reset_data)
+		self.assertEqual(reset_password.status_code,201,"Passsword was not reset")
+		new_login_data={"email":"jonen54@gmail.com","password":"257thjuly"}
+		login_after_reset=self.client().post("/auth/login",data=self.new_login_data)
+		self.assertEqual(login_after_reset.status_code,201,"Login was not successful after reset")
+
+	def test_login_after_password_reset(self):
+		"""testing if user is able to login using the previous password after a password reset"""
+		result=self.client().post("/auth/register",data=self.test_user)
+		self.assertEqual(res.status_code,201,"user not registered successfully")
+		login=self.client().post("/auth/login",data=self.login_data)
+		self.assertEqual(login.status_code,201,"User login failed")
+		reset_data={"old_password":"256thjuly","new_password":"257thjuly"}
+		reset_password=self.client().post("/auth/password_rest",data=reset_data)
+		self.assertEqual(reset_password.status_code,201,"Passsword was not reset")
+		login_after_reset=self.client().post("/auth/login",data=self.login_data)
+		self.assertEqual(login_after_reset.status_code,401,"Login was successful after reset, password was not reset")
+
+
 
 
 
