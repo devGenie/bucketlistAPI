@@ -22,10 +22,17 @@ class TestUserCrud(unittest.TestCase):
 		self.assertEqual(res.status_code,201)
 		self.assertDictEqual(res.data,{"status":"success","message":"User registered successfully"},"User registration failed")
 
-		
+	def test_duplicate_user_is_created(self):
+		""" Test if a user is created """
+		result=self.client().post("/auth/register",data=self.test_user)
+		self.assertEqual(res.status_code,201)
+		duplicate=self.client().post("/auth/register",data=self.test_user)
+		self.assertEqual(duplicate.status_code,409,"Duplicates are being added to the db")
+		self.assertDictEqual(res.data,{"status":"success","message":"User registered successfully"},"User registration failed")
+
 
 	def test_user_logs_in(self):
-		"""Test is a user is able to login successfully"""
+		"""Test if a user is able to login successfully"""
 		result=self.client().post("/auth/register",data=self.test_user)
 		self.assertEqual(result.status_code,201,"User not registered")
 		login=self.client().post("/auth/login",data=self.login_data)
