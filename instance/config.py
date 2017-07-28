@@ -35,7 +35,4 @@ app_config = {
  	'testing': TestingConfig,
  	'staging': StagingConfig,
  	'production': ProductionConfig
- }
- 		
-	
-		
+ }	
