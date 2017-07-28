@@ -28,10 +28,10 @@ OR
 $ pip install --upgrade -r requirements.txt
 ```
 
-Provide the flask application environment variable
+Set the flask application environment variables
 
 ```
-$ export FLASK_APP=run.py
+$ source .env
 ```
 
 run the flask server
