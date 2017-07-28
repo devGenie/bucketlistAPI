@@ -10,7 +10,7 @@ class BucketlistItems(db.Model):
 	complete_status=db.Column(db.Boolean,default=False)
 	bucketlist=db.Column(db.Integer,db.ForeignKey("bucketlists.id"),nullable=False)
 
-	def __init__(self,name)
+	def __init__(self,name):
 		self.name=name
 
 	def save(self):
