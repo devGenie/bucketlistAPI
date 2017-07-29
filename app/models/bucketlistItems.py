@@ -1,4 +1,4 @@
-from app import db
+from app.database import db
 
 class BucketlistItems(db.Model):
 	"""This class models the bucket list itens table"""
