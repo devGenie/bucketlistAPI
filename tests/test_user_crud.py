@@ -13,6 +13,7 @@ class TestUserCrud(unittest.TestCase):
 		self.client=self.app.test_client(self)
 
 		with self.app.app_context(): #associate the app with the current context
+			db.drop_all()
 			db.create_all() #creates all required tables
 			self.test_user={"first_name":"Onen","last_name":"Julius","email":"jonen54@gmail.com","password":"256thjuly"}
 			self.login_data={"email":"jonen54@gmail.com","password":"256thjuly"}
@@ -30,7 +31,7 @@ class TestUserCrud(unittest.TestCase):
 		self.assertEqual(result.status_code,201)
 		duplicate=self.client.post("api/v1/auth/register",data=self.test_user)
 		self.assertEqual(duplicate.status_code,409,"Duplicates are being added to the db")
-		self.assertDictEqual(json.loads(duplicate.data),{"status":"success","message":"User registered successfully"},"User registration failed")
+		self.assertDictEqual(json.loads(duplicate.data),{"status":"failed","message":"User registration failed,email already extsis"},"User registration failed")
 
 	def test_user_logs_in(self):
 		"""Test if a user is able to login successfully"""
