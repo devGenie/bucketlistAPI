@@ -1,4 +1,6 @@
-from app import db
+from app.database import db
+from app.models.bucketlists import Bucketlists
+import bcrypt
 
 class Users(db.Model):
 	"""This class represents the user table"""
@@ -7,13 +9,14 @@ class Users(db.Model):
 	first_name=db.Column(db.String(20),nullable=False)
 	last_name=db.Column(db.String(20),nullable=False)
 	email=db.Column(db.String(20),unique=True,nullable=False)
-	password=db.Column(db.String(100),nullable=False)
+	password=db.Column(db.String(255),nullable=False)
 	bucketlists=db.relationship("Bucketlists",backref="users",lazy=True)
 
-	def __init__(self, first_name,last_name,email):
+	def __init__(self, first_name,last_name,email,password):
 		self.first_name=first_name
 		self.last_name=last_name
 		self.email=email
+		self.password=bcrypt.hashpw(password.encode('UTF_8'),bcrypt.gensalt())
 
 	def save(self):
 		"""This method adds the record to the users table"""
