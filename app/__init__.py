@@ -1,13 +1,12 @@
 from flask_api import FlaskAPI
-from flask_sqlalchemy import SQLAlchemy
 from flask import Blueprint
 from app.restplus import api
 from app.endpoints.users_endpoint import ns as users_namespace
+from app.database import db
 
 #local import, import configurations
 from instance.config import app_config
 
-db=SQLAlchemy() #initialize the db
 
 def create_app(config_name):
 	""" This function wraps the creation of a new flask object and returns it after
