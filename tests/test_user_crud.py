@@ -64,20 +64,21 @@ class TestUserCrud(unittest.TestCase):
 		reset_password=self.client.post("api/v1/auth/password_reset",data=reset_data,headers={"Authorization":auth})
 		self.assertEqual(reset_password.status_code,201,"Passsword was not reset")
 		new_login_data={"email":"jonen54@gmail.com","password":"257thjuly"}
-		login_after_reset=self.client.post("api/v1/auth/login",data=self.new_login_data)
-		self.assertEqual(login_after_reset.status_code,201,"Login was not successful after reset")
+		login_after_reset=self.client.post("api/v1/auth/login",data=new_login_data)
+		self.assertEqual(login_after_reset.status_code,202,"Login was not successful after reset")
 
 	def test_login_after_password_reset(self):
 		"""testing if user is able to login using the previous password after a password reset"""
 		result=self.client.post("api/v1/auth/register",data=self.test_user)
 		self.assertEqual(result.status_code,201,"user not registered successfully")
 		login=self.client.post("api/v1/auth/login",data=self.login_data)
+		auth=json.loads(login.data)['auth']
 		self.assertEqual(login.status_code,202,"User login failed")
 		reset_data={"old_password":"256thjuly","new_password":"257thjuly"}
-		reset_password=self.client.post("api/v1/auth/password_reset",data=reset_data)
+		reset_password=self.client.post("api/v1/auth/password_reset",data=reset_data,headers={"Authorization":auth})
 		self.assertEqual(reset_password.status_code,201,"Passsword was not reset")
 		login_after_reset=self.client.post("api/v1/auth/login",data=self.login_data)
-		self.assertEqual(login_after_reset.status_code,401,"Login was successful after reset, password was not reset")
+		self.assertEqual(login_after_reset.status_code,409,"Login was successful after reset, password was not reset")
 
 	def tearDown(self):
 		""" Clean up all initialized variables"""
