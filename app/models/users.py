@@ -9,14 +9,14 @@ class Users(db.Model):
 	first_name=db.Column(db.String(20),nullable=False)
 	last_name=db.Column(db.String(20),nullable=False)
 	email=db.Column(db.String(20),unique=True,nullable=False)
-	password=db.Column(db.String(255),nullable=False)
+	password=db.Column(db.LargeBinary,nullable=False)
 	bucketlists=db.relationship("Bucketlists",backref="users",lazy=True)
 
 	def __init__(self, first_name,last_name,email,password):
 		self.first_name=first_name
 		self.last_name=last_name
 		self.email=email
-		self.password=bcrypt.hashpw(password.encode('UTF_8'),bcrypt.gensalt())
+		self.password=bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt())
 
 	def save(self):
 		"""This method adds the record to the users table"""
