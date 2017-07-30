@@ -59,7 +59,6 @@ class Login(Resource):
 	def post(self):
 		my_email=request.data['email']
 		password=request.data['password'].encode("utf8")
-		hashed=bcrypt.hashpw(password,bcrypt.gensalt())
 
 		get_user=User.query.filter_by(email=my_email).first()
 		if get_user:
@@ -75,4 +74,13 @@ class ResetPassword(Resource):
 	""" Reset user password """
 	@authenticate
 	def post(self,user,*args,**kwargs):
-		return "user",400
+		old_password=request.data['old_password']
+		new_password=request.data['new_password']
+		if bcrypt.checkpw(old_password.encode("utf8"),user.password):
+			user.password=bcrypt.hashpw(new_password.encode("utf8"),bcrypt.gensalt())
+			user.save()
+			data={"status":"success","message":"Password reset successfully"}
+			return data,201
+		else:
+			data={"status":"failed","message":"Password reset failed"}
+			return data,400
