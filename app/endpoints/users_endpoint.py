@@ -2,12 +2,29 @@ from app.restplus import api
 from flask_restplus import Resource
 from app.models.users import Users as User
 from flask import request
+from functools import wraps
 from app.database import db
+from flask import request
 import bcrypt
 
 
 ns = api.namespace(
     "auth", description="Use these endpoints to create user accounts and login into the application")
+
+def authenticate(func):
+	""" A wrapper to check and verify if access tokens are valid"""
+	wraps(func)
+	def inner_methos(*args,**kwargs):
+		if "Authorization" in request.headers:
+			user=User.verify_token(request.headers.get("Authorization"))
+			if user:
+				kwargs['user']=user
+				return func(*args,**kwargs)
+			else:
+				return None,409
+		else:
+			return None,409
+	return inner_methos
 
 
 @ns.route("/register")
@@ -53,4 +70,9 @@ class Login(Resource):
 			data={"status":"failed","message":"Login failed"}
 			return data,409
 
-
+@ns.route("/password_reset")
+class ResetPassword(Resource):
+	""" Reset user password """
+	@authenticate
+	def post(self,user,*args,**kwargs):
+		return user,400
