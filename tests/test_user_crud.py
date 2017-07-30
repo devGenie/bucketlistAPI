@@ -78,6 +78,7 @@ class TestUserCrud(unittest.TestCase):
 		reset_password=self.client.post("api/v1/auth/password_reset",data=reset_data,headers={"Authorization":auth})
 		self.assertEqual(reset_password.status_code,201,"Passsword was not reset")
 		login_after_reset=self.client.post("api/v1/auth/login",data=self.login_data)
+		print(login_after_reset.data)
 		self.assertEqual(login_after_reset.status_code,409,"Login was successful after reset, password was not reset")
 
 	def tearDown(self):
