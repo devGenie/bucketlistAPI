@@ -42,7 +42,6 @@ class TestUserCrud(unittest.TestCase):
 		self.assertEqual(result.status_code,201,"User not registered")
 		login=self.client.post("api/v1/auth/login",data=self.login_data)
 		self.assertEqual(login.status_code,202,"User not logged in")
-		self.assertDictEqual(json.loads(login.data),{"status":"success","message":"Login was successful"},"User failed to login")
 
 	def test_user_logs_out(self):
 		"""Test if a user is able to logout"""
