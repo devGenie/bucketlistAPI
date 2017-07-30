@@ -42,16 +42,16 @@ class Users(db.Model):
 		secret=os.getenv("SECRET")
 		serialized=serializer(secret)
 		try:
-			data=s.loads(token)
+			data=serialized.loads(token)
 		except SignatureExpired:
 			return None #The token is valid but expired
 		except BadSignature:
 			return None #Token is invalid
-		blacklisted_token=Bucketlists.query.filter_by(token=token).first()
+		blacklisted_token=BlackList.query.filter_by(token=token).first()
 		if blacklisted_token:
 			return None # The token has been blacklisted
 		else:
-			user=User.query.get(data['id'])
+			user=Users.query.get(data['id'])
 			return user
 
 
