@@ -2,7 +2,7 @@ import os
 from flask_script import Manager
 from flask_migrate import Migrate,MigrateCommand
 from app import db,create_app
-from app.models import users,bucketlists,bucketlistItems
+from app.models import users,bucketlists,bucketlistItems,blacklist
 
 """
 	Migrations is a way of propagating changes made to models into the database schema
