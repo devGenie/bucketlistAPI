@@ -75,4 +75,4 @@ class ResetPassword(Resource):
 	""" Reset user password """
 	@authenticate
 	def post(self,user,*args,**kwargs):
-		return user,400
+		return "user",400
