@@ -69,7 +69,7 @@ class TestUserCrud(unittest.TestCase):
 		result=self.client.post("api/v1/auth/register",data=self.test_user)
 		self.assertEqual(result.status_code,201,"user not registered successfully")
 		login=self.client.post("api/v1/auth/login",data=self.login_data)
-		self.assertEqual(login.status_code,201,"User login failed")
+		self.assertEqual(login.status_code,202,"User login failed")
 		reset_data={"old_password":"256thjuly","new_password":"257thjuly"}
 		reset_password=self.client.post("api/v1/auth/password_rest",data=reset_data)
 		self.assertEqual(reset_password.status_code,201,"Passsword was not reset")
