@@ -3,14 +3,17 @@ import os
 import json
 from app import create_app,db
 import json
+from unittest.mock import patch
 
 class TestUserCrud(unittest.TestCase):
 	def setUp(self):
 		"""Creates a test client that will be used to make http requests.
 		   A test database is also initialised to store the test data 
 		"""
+		os.environ["SECRET"]="genieishere"
 		self.app=create_app(config_name="testing")
 		self.client=self.app.test_client(self)
+		
 
 		with self.app.app_context(): #associate the app with the current context
 			db.drop_all()
