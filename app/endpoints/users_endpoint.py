@@ -1,7 +1,7 @@
 from app.restplus import api
 from flask_restplus import Resource
 from app.models.users import Users as User
-from flask import request,session
+from flask import request
 from app.database import db
 import bcrypt
 
@@ -47,9 +47,10 @@ class Login(Resource):
 		get_user=User.query.filter_by(email=my_email).first()
 		if get_user:
 			if bcrypt.checkpw(password,get_user.password):
-				data={"status":"success","message":"Login was successful"}
-				session['token']=get_user.generate_auth()
+				data={"status":"success","message":"Login was successful","auth":get_user.generate_auth().decode()}
 				return data,202
 		else:
-			print(get_user)
+			data={"status":"failed","message":"Login failed"}
+			return data,409
+
 
