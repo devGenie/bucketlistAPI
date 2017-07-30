@@ -65,6 +65,9 @@ class Login(Resource):
 			if bcrypt.checkpw(password,get_user.password):
 				data={"status":"success","message":"Login was successful","auth":get_user.generate_auth().decode()}
 				return data,202
+			else:
+				data={"status":"failed","message":"Login failed"}
+				return data,409
 		else:
 			data={"status":"failed","message":"Login failed"}
 			return data,409
