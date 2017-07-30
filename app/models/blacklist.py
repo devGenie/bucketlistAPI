@@ -1,4 +1,5 @@
 from app.database import db
+import datetime
 
 class BlackList(db.Model):
 	""" Define a table that keeps record of blacklisted tokens on logout"""
