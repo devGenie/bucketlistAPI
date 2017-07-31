@@ -54,6 +54,10 @@ class Users(db.Model):
 			user=Users.query.get(data['id'])
 			return user
 
+	def add_bucket_list(self,name,description):
+		bucketlist=Bucketlists(name=name,description=description)
+		self.bucketlists.append(bucketlist)
+
 
 	def __repr__(self):
 		return {"user_id":self.id,"email":self.email,"first_name":self.first_name,"last_name":self.last_name}
