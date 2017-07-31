@@ -10,7 +10,6 @@ class TestUserCrud(unittest.TestCase):
 		"""Creates a test client that will be used to make http requests.
 		   A test database is also initialised to store the test data 
 		"""
-		os.environ["SECRET"]="genieishere"
 		self.app=create_app(config_name="testing")
 		self.client=self.app.test_client(self)
 		
