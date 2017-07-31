@@ -1,6 +1,7 @@
 from app.restplus import api
 from flask_restplus import Resource
 from app.models.users import Users as User
+from app.models.blacklist import BlackList
 from flask import request
 from functools import wraps
 from app.database import db
@@ -16,9 +17,11 @@ def authenticate(func):
 	wraps(func)
 	def inner_methos(*args,**kwargs):
 		if "Authorization" in request.headers:
-			user=User.verify_token(request.headers.get("Authorization"))
+			token=request.headers.get("Authorization")
+			user=User.verify_token(token)
 			if user:
 				kwargs['user']=user
+				kwargs['token']=token
 				return func(*args,**kwargs)
 			else:
 				return None,409
@@ -87,3 +90,18 @@ class ResetPassword(Resource):
 		else:
 			data={"status":"failed","message":"Password reset failed"}
 			return data,400
+
+@ns.route("/logout")
+class Logout(Resource):
+	"""Log user out of the application"""
+	@authenticate
+	def get(self,token,*arg,**kwargs):
+		blacklist=BlackList(token)
+		blacklist.save()
+		if blacklist.id:
+			data={"status":"success","message":"Logged out successfully"}
+			return data,200
+		else:
+			data={"status":"failed","message":"Logged out failed"}
+			return data,400
+
