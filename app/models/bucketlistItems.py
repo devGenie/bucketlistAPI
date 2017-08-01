@@ -8,7 +8,7 @@ class BucketlistItems(db.Model):
 	date_added=db.Column(db.DateTime,default=db.func.current_timestamp())
 	date_completed=db.Column(db.DateTime,nullable=True)
 	complete_status=db.Column(db.Boolean,default=False)
-	bucketlist=db.Column(db.Integer,db.ForeignKey("bucketlists.id"),nullable=False)
+	bucketlist=db.Column(db.Integer,db.ForeignKey("bucketlists.id",ondelete='CASCADE'),nullable=False)
 
 	def __init__(self,name):
 		self.name=name
