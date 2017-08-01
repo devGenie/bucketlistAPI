@@ -23,13 +23,13 @@ class BucketListCrud(Resource):
 			return data,201
 		else:
 			data={"status":"failed","message":"Bucketlist not added"}
-			return data,400
+			return data,200
 
 	@authenticate
 	def get(self,user,bucketlist_id=None,*arg,**kwargs):
 		results=[]
 		if bucketlist_id:
-			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id).first()
+			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 			if bucketlist:
 				results={"id":bucketlist.id,"name":bucketlist.name,"description":bucketlist.description}
 		else:
@@ -40,12 +40,12 @@ class BucketListCrud(Resource):
 			return data,200
 		else:
 			data={"status":"failed","message":"No data returned"}
-			return data,204
+			return data,200
 
 	@authenticate
 	def put(self,user,bucketlist_id=None,*arg,**kwargs):
 		if bucketlist_id:
-			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id).first()
+			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 
 			if bucketlist:
 				if request.data['name']:
@@ -55,6 +55,9 @@ class BucketListCrud(Resource):
 				bucketlist.save()
 				data={"status":"success","message":"Bucketlist updated successfully"}
 				return data,201
+			else:
+				data={"status":"failed","message":"No bucketlist provided"}
+				return data,200
 
 		else:
 			data={"status":"failed","message":"No bucketlist provided"}
