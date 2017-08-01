@@ -8,7 +8,7 @@ class Bucketlists(db.Model):
 	name=db.Column(db.String(20),nullable=False)
 	description = db.Column(db.String(150),nullable=True)
 	user=db.Column(db.Integer,db.ForeignKey("users.id"),nullable=False)
-	items=db.relationship("BucketlistItems",backref=db.backref("bucketlists",cascade="all,delete-orphan"),lazy=True)
+	items=db.relationship("BucketlistItems",backref="bucketlists",cascade="all, delete-orphan",passive_deletes=True,lazy=True)
 
 	def __init__(self,name,description=""):
 		self.name=name
@@ -27,4 +27,4 @@ class Bucketlists(db.Model):
 
 	def delete(self):
 		db.session.delete(self)
-		db.commit()
+		db.session.commit()
