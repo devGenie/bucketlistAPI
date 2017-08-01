@@ -104,9 +104,6 @@ class TestBucketListCrud(unittest.TestCase):
 	def test_bucketlist_item_exists_after_delete(self):
 		pass
 
-	def test_bucketlist_exists_after_delete(self):
-		pass
-
 	def test_bucketlist_items_exist_after_deleting_bucketlist(self):
 		pass
 
@@ -119,9 +116,6 @@ class TestBucketListCrud(unittest.TestCase):
 		self.assertEqual(result.status_code,409,"Bucketlist been created after logout")
 
 	def test_add_bucketlist_item_after_logout(self):
-		pass
-
-	def test_add_duplicate_bucketlist_name(self):
 		pass
 
 	def tearDown(self):
