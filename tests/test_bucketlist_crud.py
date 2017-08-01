@@ -33,7 +33,17 @@ class TestBucketListCrud(unittest.TestCase):
 		pass
 
 	def test_edit_bucketlist(self):
-		pass
+		"""Test if a bucketlist is can be edited"""
+		bucketlist_data={"name":"bucket1","description":"This is a test bucketlist"}
+		result=self.client.post("api/v1/bucketlists/",data=bucketlist_data,headers={"Authorization":self.token})
+		self.assertEqual(result.status_code,201,"Bucketlist has not been created")
+		edit_data={"name":"bucket2","description":"This is a test bucketlist"}
+		edited=self.client.put("api/v1/bucketlists/1",data=edit_data,headers={"Authorization":self.token})
+		self.assertEqual(edited.status_code,201,"Bucketlist has not been edited")
+		retrieved=self.client.get("api/v1/bucketlists/1",headers={"Authorization":self.token})
+		expected={"name":"bucket2","description":"This is a test bucketlist","id":1}
+		self.assertDictEqual(json.loads(retrieved.data)['data'],expected,"Bucket lists have not been edited")
+
 
 	def test_get_bucketlists(self):
 		""" Test if a user is able to retrieve their bucketlists """
@@ -91,8 +101,13 @@ class TestBucketListCrud(unittest.TestCase):
 	def test_bucketlist_items_exist_after_deleting_bucketlist(self):
 		pass
 
-	def test_add_bucketlist_after_logout(self):
-		pass
+	def test_create_bucketlist_after_logout(self):
+		"""Test if a bucketlist is created successfully after a user is logged out"""
+		bucketlist_data={"name":"bucket1","description":"This is a test bucketlist"}
+		logout=self.client.get("api/v1/auth/logout",headers={"Authorization":self.token})
+		self.assertEqual(logout.status_code,200,"User logged out successfully")
+		result=self.client.post("api/v1/bucketlists/",data=bucketlist_data,headers={"Authorization":self.token})
+		self.assertEqual(result.status_code,409,"Bucketlist been created after logout")
 
 	def test_add_bucketlist_item_after_logout(self):
 		pass
