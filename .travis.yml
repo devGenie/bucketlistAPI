@@ -16,5 +16,6 @@ before_script:
 
 # command to run tests
 script: 
+  - source .env
   - nosetests --with-coverage
 after_success: coveralls
