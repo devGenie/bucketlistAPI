@@ -48,6 +48,7 @@ class TestBucketListCrud(unittest.TestCase):
 		self.assertListEqual(json.loads(retrieved.data)['data'],expected,"Bucket lists have not been retrieved")
 
 	def test_get_single_bucketlist(self):
+		""" Test if a user is able to retrieve a single bucketlist """
 		bucketlist_data1={"name":"bucket1","description":"This is a test bucketlist"}
 		bucketlist_data2={"name":"bucket2","description":"This is a test bucketlist"}
 		result1=self.client.post("api/v1/bucketlists/",data=bucketlist_data1,headers={"Authorization":self.token})
@@ -57,6 +58,11 @@ class TestBucketListCrud(unittest.TestCase):
 		retrieved=self.client.get("api/v1/bucketlists/1",headers={"Authorization":self.token})
 		expected={"name":"bucket1","description":"This is a test bucketlist","id":json.loads(result1.data)["id"]}
 		self.assertDictEqual(json.loads(retrieved.data)['data'],expected,"Bucket lists have not been retrieved")
+
+	def test_get_none_existent_bucketlist(self):
+		""" Test if a endpoint returns non existing bucketlists """
+		retrieved=self.client.get("api/v1/bucketlists/1",headers={"Authorization":self.token})
+		self.assertEqual(retrieved.status_code,204,"Non existing bucket lists have been retrieved")
 
 	def test_delete_bucketlist(self):
 		pass
