@@ -18,6 +18,13 @@ class Bucketlists(db.Model):
 		db.session.add(self)
 		db.session.commit()
 
+	def edit(self,name="",description=""):
+		if len(name.strip())>0:
+			self.name=name
+		if len(description.strip())>0:
+			self.description=description
+		db.session.commit()
+
 	def delete(self):
 		db.session.delete(self)
 		db.commit()
