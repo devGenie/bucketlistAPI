@@ -48,7 +48,15 @@ class TestBucketListCrud(unittest.TestCase):
 		self.assertListEqual(json.loads(retrieved.data)['data'],expected,"Bucket lists have not been retrieved")
 
 	def test_get_single_bucketlist(self):
-		pass
+		bucketlist_data1={"name":"bucket1","description":"This is a test bucketlist"}
+		bucketlist_data2={"name":"bucket2","description":"This is a test bucketlist"}
+		result1=self.client.post("api/v1/bucketlists/",data=bucketlist_data1,headers={"Authorization":self.token})
+		self.assertEqual(result1.status_code,201,"Bucketlist1 has not been created")
+		result2=self.client.post("api/v1/bucketlists/",data=bucketlist_data2,headers={"Authorization":self.token})
+		self.assertEqual(result2.status_code,201,"Bucketlist2 has not been created")
+		retrieved=self.client.get("api/v1/bucketlists/1",headers={"Authorization":self.token})
+		expected={"name":"bucket1","description":"This is a test bucketlist","id":json.loads(result1.data)["id"]}
+		self.assertDictEqual(json.loads(retrieved.data)['data'],expected,"Bucket lists have not been retrieved")
 
 	def test_delete_bucketlist(self):
 		pass
