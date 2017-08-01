@@ -7,7 +7,7 @@ from flask import request
 
 ns=api.namespace("bucketlists",description="Use these endpoints to manipulate bucketlist data")
 
-@ns.route("/")
+@ns.route("/","/<int:bucketlist_id>")
 class BucketListCrud(Resource):
 	""" Perform Crud operations on Bucketlist """
 	@authenticate
@@ -26,8 +26,15 @@ class BucketListCrud(Resource):
 			return data,400
 
 	@authenticate
-	def get(self,user,*arg,**kwargs):
-		results=[{"id":item.id,"name":item.name,"description":item.description} for item in user.bucketlists]
+	def get(self,user,bucketlist_id=None,*arg,**kwargs):
+		results=[]
+		if bucketlist_id:
+			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id).first()
+			if bucketlist:
+				results={"id":bucketlist.id,"name":bucketlist.name,"description":bucketlist.description}
+		else:
+			results=[{"id":item.id,"name":item.name,"description":item.description} for item in user.bucketlists]
+			
 		if len(results)>0:
 			data={"status":"success","data":results}
 			return data,200
