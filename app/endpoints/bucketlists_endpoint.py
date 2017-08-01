@@ -62,3 +62,14 @@ class BucketListCrud(Resource):
 		else:
 			data={"status":"failed","message":"No bucketlist provided"}
 			return data,404
+
+	@authenticate
+	def delete(self,user,bucketlist_id=None,*arg,**kwargs):
+		if bucketlist_id:
+			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
+			bucketlist.delete()
+			data={"status":"success","message":"Bucketlist deleted successfully"}
+			return data,200
+		else:
+			data={"status":"failed","message":"No bucketlist provided"}
+			return data,404
