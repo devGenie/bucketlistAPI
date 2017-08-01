@@ -34,10 +34,28 @@ class BucketListCrud(Resource):
 				results={"id":bucketlist.id,"name":bucketlist.name,"description":bucketlist.description}
 		else:
 			results=[{"id":item.id,"name":item.name,"description":item.description} for item in user.bucketlists]
-			
+
 		if len(results)>0:
 			data={"status":"success","data":results}
 			return data,200
 		else:
 			data={"status":"failed","message":"No data returned"}
 			return data,204
+
+	@authenticate
+	def put(self,user,bucketlist_id=None,*arg,**kwargs):
+		if bucketlist_id:
+			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id).first()
+
+			if bucketlist:
+				if request.data['name']:
+					bucketlist.edit(name=request.data['name'])
+				if request.data['description']:
+					bucketlist.description=request.data['description']
+				bucketlist.save()
+				data={"status":"success","message":"Bucketlist updated successfully"}
+				return data,201
+
+		else:
+			data={"status":"failed","message":"No bucketlist provided"}
+			return data,404
