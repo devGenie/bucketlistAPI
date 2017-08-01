@@ -72,10 +72,19 @@ class TestBucketListCrud(unittest.TestCase):
 	def test_get_none_existent_bucketlist(self):
 		""" Test if a endpoint returns non existing bucketlists """
 		retrieved=self.client.get("api/v1/bucketlists/1",headers={"Authorization":self.token})
-		self.assertEqual(retrieved.status_code,204,"Non existing bucket lists have been retrieved")
+		self.assertEqual(retrieved.status_code,200,"Non existing bucket lists have been retrieved")
+		self.assertEqual(json.loads(retrieved.data),{"status":"failed","message":"No data returned"},"Non existent records returned")
 
 	def test_delete_bucketlist(self):
-		pass
+		bucketlist_data={"name":"bucket1","description":"This is a test bucketlist"}
+		result=self.client.post("api/v1/bucketlists/",data=bucketlist_data,headers={"Authorization":self.token})
+		self.assertEqual(result.status_code,201,"Bucketlist has not been created")
+		result=self.client.delete("api/v1/bucketlists/1",data=bucketlist_data,headers={"Authorization":self.token})
+		self.assertEqual(result.status_code,200,"Bucketlist has not been deleted")
+		retrieved=self.client.get("api/v1/bucketlists/1",headers={"Authorization":self.token})
+		expected={"name":"bucket1","description":"This is a test bucketlist","id":1}
+		self.assertNotEqual(json.loads(retrieved.data),expected,"Bucket list have not been deleted")
+
 
 	def test_add_bucketlist_item(self):
 		pass
