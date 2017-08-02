@@ -84,7 +84,7 @@ class TestBucketListItemCrud(unittest.TestCase):
 		item_data=json.loads(added_result.data)['data']
 		item_id=item_data['id']
 		item_url=self.baseUrl+"{}".format(item_id)
-		delete_result=self.client.delete(self.baseUrl,headers={"Authorization":self.token})
+		delete_result=self.client.delete(item_url,headers={"Authorization":self.token})
 		self.assertEqual(delete_result.status_code,200,"Bucket list item not deleted")
 		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
 		res2=json.loads(fetch_result.data)['data']
