@@ -1,13 +1,11 @@
 from app.restplus import api
 from flask_restplus import Resource
-from app.models.users import Users
 from app.models.bucketlists import Bucketlists
 from app.models.bucketlistItems import BucketlistItems
 from app.endpoints.users_endpoint import authenticate
-from app.endpoints.bucketlists_endpoint import ns
 from flask import request
 
-ns=api.namespace("bucketlists",description="Use these endpoints to manipulate bucketlist data")
+ns = api.namespace("bucketlists",description = "Use these endpoints to manipulate bucketlist data")
 @ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>","/<int:bucketlist_id>/items/")
 class BucketListItemCrud(Resource):
 	""" Perform crud operations on bucketlist items """
@@ -45,6 +43,9 @@ class BucketListItemCrud(Resource):
 							"complete_status":item.complete_status
 				          }
 				data={"status":"success","message":"Item retrieved successfully","data":item_data}
+				return data,200
+			else:
+				data={"status":"failed","message":"Item not found"}
 				return data,200
 		else:
 			bucketlist=Bucketlists.query.filter_by(user=user.id,id=bucketlist_id).first()
@@ -95,7 +96,7 @@ class BucketListItemCrud(Resource):
 			if item:
 				item.delete()
 				data={"status":"success","message":"Item deleted successfully"}
-				return data,200
+				return "data",200
 			else:
 				data={"status":"failed","message":"Item does not exist"}
 				return data,200
@@ -105,6 +106,7 @@ class BucketListItemCrud(Resource):
 
 @ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>/complete")
 class CompleteItem(Resource):
+	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
 		if bucketlist_item:
 			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id,BucketlistItems.id==bucketlist_item).first()
@@ -116,7 +118,7 @@ class CompleteItem(Resource):
 							"id":item.id,
 							"name":item.name,
 							"date_added":item.date_added.strftime("%b/%d/%y"),
-							"date_completed":item.date_completed,
+							"date_completed":str(item.date_completed),
 							"complete_status":item.complete_status
 				          }
 					data={"status":"success","message":"Item completed successfully","data":item_data}
