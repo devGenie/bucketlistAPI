@@ -108,15 +108,19 @@ class TestBucketListItemCrud(unittest.TestCase):
 
 	def test_search_bucketlist_item(self):
 		""" Test if searching a bucketlist item returns results"""
-		bucketlist_item={"name":"Item 1"}
-		bucketlist_item2={"name":"JustMe"}
-		self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
+		bucketlist_item={"name":"Just1"}
+		bucketlist_item2={"name":"JustMeAndMe"}
+		bucketlist_item3={"name":"Very Different"}
+		result1=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
 		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item2)
-		res_data=json.loads(result.data)['data']
+		self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item3)
+		res_data1=json.loads(result.data)['data']
+		res_data2=json.loads(result1.data)['data']
+		combined=[res_data1,res_data2]
 		item_url=self.baseUrl+"?search=just"
 		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
 		res2=json.loads(fetch_result.data)['data']
-		self.assertEqual(res_data['id'],res2['id'],"Search was not successful")
+		self.assertEqual(combined,res2,"Search was not successful")
 	#def test_bucketlist_items_exist_after_deleting_bucketlist(self):
 	#	pass
 
