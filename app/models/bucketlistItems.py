@@ -21,6 +21,11 @@ class BucketlistItems(db.Model):
 		self.name=name
 		db.session.commit()
 
+	def complete(self):
+		self.complete_status=True
+		self.date_completed=db.func.current_timestamp().stftime("%b/%d/%y")
+		db.session.commit()
+
 	def delete(self):
 		db.session.delete(self)
 		db.session.commit()
