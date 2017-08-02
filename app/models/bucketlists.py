@@ -25,6 +25,12 @@ class Bucketlists(db.Model):
 			self.description=description
 		db.session.commit()
 
+	def add_item(self,name):
+		if name:
+			item=BucketlistItems(name)
+			self.items.append(item)
+			db.session.commit()
+
 	def delete(self):
 		db.session.delete(self)
 		db.session.commit()
