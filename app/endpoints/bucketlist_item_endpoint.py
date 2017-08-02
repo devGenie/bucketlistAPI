@@ -107,13 +107,11 @@ class BucketListItemCrud(Resource):
 class CompleteItem(Resource):
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
 		if bucketlist_item:
-			name=request.data['name']
 			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id,BucketlistItems.id==bucketlist_item).first()
 			if item:
 				name1=item.name
-				item.complete(name)
-				name2=item.name
-				if name1 is not name2:
+				item.complete()
+				if item.complete_status:
 					item_data={
 							"id":item.id,
 							"name":item.name,
@@ -121,10 +119,10 @@ class CompleteItem(Resource):
 							"date_completed":item.date_completed,
 							"complete_status":item.complete_status
 				          }
-					data={"status":"success","message":"Item edited successfully","data":item_data}
+					data={"status":"success","message":"Item completed successfully","data":item_data}
 					return data,200
 				else:
-					data={"status":"failed","message":"Item not edited"}
+					data={"status":"failed","message":"Item not complete"}
 					return data,200
 			else:
 				data={"status":"failed","message":"Item not found"}
