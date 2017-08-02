@@ -34,7 +34,18 @@ class BucketListItemCrud(Resource):
 
 	@authenticate
 	def get(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
-		pass
+		if bucketlist_item:
+			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id).first()
+			if item:
+				item_data={
+							"id":item.id,
+							"name":item.name,
+							"date_added":item.date_added.strftime("%b/%d/%y"),
+							"date_completed":item.date_completed,
+							"complete_status":item.complete_status
+				          }
+				data={"status":"success","message":"Item retrieved successfully","data":item_data}
+				return data,200
 
 	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
