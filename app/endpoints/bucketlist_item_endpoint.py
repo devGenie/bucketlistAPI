@@ -35,7 +35,7 @@ class BucketListItemCrud(Resource):
 	@authenticate
 	def get(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
 		if bucketlist_item:
-			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id).first()
+			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,BucketlistItems.id==bucketlist_item).first()
 			if item:
 				item_data={
 							"id":item.id,
@@ -55,12 +55,38 @@ class BucketListItemCrud(Resource):
 							"date_completed":item.date_completed,
 							"complete_status":item.complete_status} for item in bucketlist.items]
 				data={"status":"success","message":"Items retrieved successfully","data":results}
-				print(data)
 				return data,200
 
 	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
-		pass
+		if bucketlist_item:
+			name=request.data['name']
+			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id,BucketlistItems.id==bucketlist_item).first()
+			if item:
+				name1=item.name
+				item.edit(name)
+				name2=item.name
+				if name1 is not name2:
+					item_data={
+							"id":item.id,
+							"name":item.name,
+							"date_added":item.date_added.strftime("%b/%d/%y"),
+							"date_completed":item.date_completed,
+							"complete_status":item.complete_status
+				          }
+					data={"status":"success","message":"Item edited successfully","data":item_data}
+					return data,200
+				else:
+					data={"status":"failed","message":"Item not edited"}
+					return data,200
+			else:
+				data={"status":"failed","message":"Item not found"}
+				return data,200
+
+		else:
+			data={"status":"failed","message":"Resource not found"}
+			return data,404
+
 
 	@authenticate
 	def delete(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
