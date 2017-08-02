@@ -85,28 +85,6 @@ class TestBucketListCrud(unittest.TestCase):
 		expected={"name":"bucket1","description":"This is a test bucketlist","id":1}
 		self.assertNotEqual(json.loads(retrieved.data),expected,"Bucket list have not been deleted")
 
-
-	def test_add_bucketlist_item(self):
-		pass
-
-	def test_edit_bucketlist_item(self):
-		pass
-
-	def test_get_bucketlist_item(self):
-		pass
-
-	def test_get_bucketlist_items(self):
-		pass
-
-	def delete_bucketlist_item(self):
-		pass
-
-	def test_bucketlist_item_exists_after_delete(self):
-		pass
-
-	def test_bucketlist_items_exist_after_deleting_bucketlist(self):
-		pass
-
 	def test_create_bucketlist_after_logout(self):
 		"""Test if a bucketlist is created successfully after a user is logged out"""
 		bucketlist_data={"name":"bucket1","description":"This is a test bucketlist"}
@@ -114,9 +92,6 @@ class TestBucketListCrud(unittest.TestCase):
 		self.assertEqual(logout.status_code,200,"User logged out successfully")
 		result=self.client.post("api/v1/bucketlists/",data=bucketlist_data,headers={"Authorization":self.token})
 		self.assertEqual(result.status_code,409,"Bucketlist been created after logout")
-
-	def test_add_bucketlist_item_after_logout(self):
-		pass
 
 	def tearDown(self):
 		""" Clean up the test DB  """
