@@ -45,6 +45,16 @@ class TestBucketListItemCrud(unittest.TestCase):
 
 	def test_get_bucketlist_item(self):
 		""" Test if a bucket list item can be retrieved """
+		bucketlist_item={"name":"Item 1"}
+		added_result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
+		self.assertEqual(added_result.status_code,201,"Bucketlist Item has not been added")
+		item_data=json.loads(added_result.data)['data']
+		item_id=item_data['id']
+		item_url=self.baseUrl+"{}".format(item_id)
+		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
+		res=json.loads(fetch_result.data)['data']
+		self.assertEqual(res,item_data,"Item has not been retrieved successfully")
+
 
 	def test_get_bucketlist_items(self):
 		""" Test if bucket list items can be retrieved """
