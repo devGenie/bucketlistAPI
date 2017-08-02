@@ -30,12 +30,11 @@ class TestBucketListItemCrud(unittest.TestCase):
 		bucketlist_item={"name":"Item 1"}
 		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
 		self.assertEqual(result.status_code,201,"Bucketlist Item has not been added")
-		self.assertTrue(json.loads(result.data).contains_key('data'),"Added bucketlist data has not been returned")
+		self.assertTrue('data' in json.loads(result.data),"Added bucketlist data has not been returned")
 
 	def test_edit_bucketlist_item(self):
 		""" Test if a bucket list Item is edited successfully """
 		bucketlist_item={"name":"Item 1"}
-		print(self.baseUrl)
 		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
 		self.assertEqual(result.status_code,201,"Bucketlist Item has not been added")
 		bucketlist_item_edit={"name":"Item 2"}
@@ -91,6 +90,9 @@ class TestBucketListItemCrud(unittest.TestCase):
 		item_url=self.baseUrl+"{}".format(item_id)
 		delete_result=self.client.delete(self.baseUrl,headers={"Authorization":self.token})
 		self.assertEqual(delete_result.status_code,200,"Bucket list item not deleted")
+		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
+		res2=json.loads(fetch_result.data)['data']
+		self.assertNotEqual(res,res2,"Item not deleted")
 
 	def test_complete_bucketlist_item(self):
 		"Test if bucket list item can be marked complete"
