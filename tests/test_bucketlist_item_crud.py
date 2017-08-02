@@ -43,15 +43,11 @@ class TestBucketListItemCrud(unittest.TestCase):
 		item_url=self.baseUrl+"{}".format(item_id)
 
 		edited_result=self.client.put(item_url,headers={"Authorization":self.token},data=bucketlist_item_edit)
-		self.assertEqual(edited_result.status_code,201,"Bucketlist Item has not been edited")
+		res=json.loads(edited_result.data)['data']
+		self.assertEqual(edited_result.status_code,200,"Bucketlist Item has not been edited")
 		original=json.loads(result.data)['data']
-		name="item2"
-		expected_data=original['date_added']
-		date_completed=original['date_completed']
-		complete_status=original['complete_status']
-		expected_data={"name":name,"date_added":date_added,"date_completed":date_completed,"complete_status":complete_status}
-		self.assertEqual(json.loads(edited_result.data)['data'],expected_data,"Bucket list Item has not been edited")
-		
+		name="Item 2"
+		self.assertEqual(res['name'],name,"Bucket list item not edited successfully")
 
 	def test_get_bucketlist_item(self):
 		""" Test if a bucket list item can be retrieved """
