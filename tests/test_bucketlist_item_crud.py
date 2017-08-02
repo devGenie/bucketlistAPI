@@ -78,7 +78,7 @@ class TestBucketListItemCrud(unittest.TestCase):
 		fetch_result=self.client.get(self.baseUrl,headers={"Authorization":self.token})
 		self.assertEqual(fetch_result.status_code,200,"Request was successful")
 		res=json.loads(fetch_result.data)['data']
-		self.assertEqual(res,item_data,"Items have not been retrieved successfully")
+		self.assertEqual(res,items_data,"Items have not been retrieved successfully")
 
 	def test_delete_bucketlist_item(self):
 		""" Test if a bucket list item can be deleted"""
@@ -92,7 +92,7 @@ class TestBucketListItemCrud(unittest.TestCase):
 		self.assertEqual(delete_result.status_code,200,"Bucket list item not deleted")
 		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
 		res2=json.loads(fetch_result.data)['data']
-		self.assertNotEqual(res,res2,"Item not deleted")
+		self.assertNotEqual(item_data,res2,"Item not deleted")
 
 	def test_complete_bucketlist_item(self):
 		"Test if bucket list item can be marked complete"
