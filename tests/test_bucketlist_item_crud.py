@@ -38,7 +38,10 @@ class TestBucketListItemCrud(unittest.TestCase):
 		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
 		self.assertEqual(result.status_code,201,"Bucketlist Item has not been added")
 		bucketlist_item_edit={"name":"Item 2"}
-		edited_result=self.client.put(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item_edit)
+		item_data=json.loads(result.data)['data']
+		item_id=item_data['id']
+		item_url=self.baseUrl+"{}".format(item_id)
+		edited_result=self.client.put(item_url,headers={"Authorization":self.token},data=bucketlist_item_edit)
 		self.assertEqual(edited_result.status_code,201,"Bucketlist Item has not been edited")
 		original=json.loads(result.data)['data']
 		name="item2"
@@ -66,27 +69,53 @@ class TestBucketListItemCrud(unittest.TestCase):
 		""" Test if bucket list items can be retrieved """
 		bucketlist_item1={"name":"Item 1"}
 		added_result1=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item1)
+		self.assertEqual(added_result1.status_code,201,"Request was not successful")
 		bucketlist_item2={"name":"Item 2"}
-		added_result1=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item1)
+		added_result2=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item1)
+		self.assertEqual(added_result2.status_code,201,"Request was not successful")
 		items_data=[json.loads(added_result1.data)['data'],json.loads(added_result2.data)['data']]
 		fetch_result=self.client.get(self.baseUrl,headers={"Authorization":self.token})
+		self.assertEqual(fetch_result.status_code,200,"Request was successful")
 		res=json.loads(fetch_result.data)['data']
 		self.assertEqual(res,item_data,"Items have not been retrieved successfully")
 
 	def test_delete_bucketlist_item(self):
-		pass
+		""" Test if a bucket list item can be deleted"""
+		bucketlist_item={"name":"Item 1"}
+		added_result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
+		self.assertEqual(added_result.status_code,201,"Bucketlist Item has not been added")
+		item_data=json.loads(added_result.data)['data']
+		item_id=item_data['id']
+		item_url=self.baseUrl+"{}".format(item_id)
+		delete_result=self.client.delete(self.baseUrl,headers={"Authorization":self.token})
+		self.assertEqual(delete_result.status_code,200,"Bucket list item not deleted")
 
 	def test_complete_bucketlist_item(self):
-		pass
+		"Test if bucket list item can be marked complete"
+		bucketlist_item={"name":"Item 1"}
+		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
+		self.assertEqual(result.status_code,201,"Bucketlist Item has not been added")
+		item_data=json.loads(result.data)['data']
+		item_id=item_data['id']
+		complete_url=self.baseUrl+"{}/complete".format(item_id)
+		edited_result=self.client.put(complete_url,headers={"Authorization":self.token},data=bucketlist_item_edit)
+		self.assertEqual(edited_result.status_code,200,"Bucketlist Item has not been completed")
+		original=json.loads(result.data)['data']
+		name="item2"
+		expected_data=original['date_added']
+		date_completed=original['date_completed']
+		complete_status=True
+		expected_data={"name":name,"date_added":date_added,"date_completed":date_completed,"complete_status":complete_status}
+		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
+		res=json.loads(fetch_result.data)['data']
+		self.assertEqual(res,expected_data,"Bucket list Item has not been edited")
 
-	def test_bucketlist_item_exists_after_delete(self):
-		pass
+	#def test_bucketlist_items_exist_after_deleting_bucketlist(self):
+	#	pass
 
-	def test_bucketlist_items_exist_after_deleting_bucketlist(self):
-		pass
+	#def test_add_bucketlist_item_after_logout(self):
+	#	pass
 
-	def test_add_bucketlist_item_after_logout(self):
-		pass
 
 	def tearDown(self):
 		""" Clean up the database after running the test"""
