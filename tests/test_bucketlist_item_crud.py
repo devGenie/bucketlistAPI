@@ -23,7 +23,7 @@ class TestBucketListItemCrud(unittest.TestCase):
 			bucketlist_data={"name":"bucket1","description":"This is a test bucketlist"}
 			result=self.client.post("api/v1/bucketlists/",data=bucketlist_data,headers={"Authorization":self.token}) #create a test bucketlist
 			self.bucketlist_id=json.loads(result.data)['id']
-			self.baseUrl="api/v1/bucketlist/{}/".format(self.bucketlist_id)
+			self.baseUrl="api/v1/bucketlists/{}/items/".format(self.bucketlist_id)
 
 	def test_add_bucketlist_item(self):
 		""" Test if a bucket list item is added successfully """
@@ -35,12 +35,14 @@ class TestBucketListItemCrud(unittest.TestCase):
 	def test_edit_bucketlist_item(self):
 		""" Test if a bucket list Item is edited successfully """
 		bucketlist_item={"name":"Item 1"}
+		print(self.baseUrl)
 		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
 		self.assertEqual(result.status_code,201,"Bucketlist Item has not been added")
 		bucketlist_item_edit={"name":"Item 2"}
 		item_data=json.loads(result.data)['data']
 		item_id=item_data['id']
 		item_url=self.baseUrl+"{}".format(item_id)
+
 		edited_result=self.client.put(item_url,headers={"Authorization":self.token},data=bucketlist_item_edit)
 		self.assertEqual(edited_result.status_code,201,"Bucketlist Item has not been edited")
 		original=json.loads(result.data)['data']
