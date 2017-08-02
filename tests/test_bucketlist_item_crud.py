@@ -102,17 +102,11 @@ class TestBucketListItemCrud(unittest.TestCase):
 		item_data=json.loads(result.data)['data']
 		item_id=item_data['id']
 		complete_url=self.baseUrl+"{}/complete".format(item_id)
-		edited_result=self.client.put(complete_url,headers={"Authorization":self.token},data=bucketlist_item_edit)
+		edited_result=self.client.put(complete_url,headers={"Authorization":self.token})
 		self.assertEqual(edited_result.status_code,200,"Bucketlist Item has not been completed")
-		original=json.loads(result.data)['data']
-		name="item2"
-		expected_data=original['date_added']
-		date_completed=original['date_completed']
-		complete_status=True
-		expected_data={"name":name,"date_added":date_added,"date_completed":date_completed,"complete_status":complete_status}
 		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
-		res=json.loads(fetch_result.data)['data']
-		self.assertEqual(res,expected_data,"Bucket list Item has not been edited")
+		res=json.loads(fetch_result.data)['data']['complete_status']
+		self.assertTrue(res,"Bucket list Item has not been edited")
 
 	#def test_bucketlist_items_exist_after_deleting_bucketlist(self):
 	#	pass
