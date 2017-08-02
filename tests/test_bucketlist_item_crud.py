@@ -106,6 +106,17 @@ class TestBucketListItemCrud(unittest.TestCase):
 		res=json.loads(fetch_result.data)['data']['complete_status']
 		self.assertTrue(res,"Bucket list Item has not been edited")
 
+	def test_search_bucketlist_item(self):
+		""" Test if searching a bucketlist item returns results"""
+		bucketlist_item={"name":"Item 1"}
+		bucketlist_item2={"name":"JustMe"}
+		self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
+		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item2)
+		res_data=json.loads(result.data)['data']
+		item_url=self.baseUrl+"?search=just"
+		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
+		res2=json.loads(fetch_result.data)['data']
+		self.assertEqual(res_data['id'],res2['id'],"Search was not successful")
 	#def test_bucketlist_items_exist_after_deleting_bucketlist(self):
 	#	pass
 
