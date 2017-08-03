@@ -13,21 +13,25 @@ class BucketListItemCrud(Resource):
 	def post(self,user,bucketlist_id,*arg,**kwargs):
 		name=request.data['name']
 		bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
-		initial_count=len(bucketlist.items)
-		bucketlist.add_item(name)
-		new_count=len(bucketlist.items)
-		if new_count>initial_count:
-			new_item=bucketlist.items[-1]
-			item_data={
-					   "id":new_item.id,
-					   "name":new_item.name,
-					   "date_added":new_item.date_added.strftime("%b/%d/%y"),
-					   "date_completed":new_item.date_completed,
-					   "complete_status":new_item.complete_status}
-			data={"status":"success","message":"Item added successfully","data":item_data}
-			return data,201
+		if bucketlist:
+			initial_count=len(bucketlist.items)
+			bucketlist.add_item(name)
+			new_count=len(bucketlist.items)
+			if new_count>initial_count:
+				new_item=bucketlist.items[-1]
+				item_data={
+						   "id":new_item.id,
+						   "name":new_item.name,
+						   "date_added":new_item.date_added.strftime("%b/%d/%y"),
+						   "date_completed":new_item.date_completed,
+						   "complete_status":new_item.complete_status}
+				data={"status":"success","message":"Item added successfully","data":item_data}
+				return data,201
+			else:
+				data={"status":"failed","message":"Item not added successfully"}
+				return data,200
 		else:
-			data={"status":"failed","message":"Item not added successfully"}
+			data={"status":"failed","message":"Bucketlist does not exist"}
 			return data,200
 
 	@authenticate
