@@ -89,7 +89,6 @@ class TestBucketListItemCrud(unittest.TestCase):
 		self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item4)
 	
 		pagination_request=self.baseUrl+"?page=1&pagesize=2"
-		print(pagination_request)
 		fetch_result=self.client.get(pagination_request,headers={"Authorization":self.token})
 		res=json.loads(fetch_result.data)['data']
 		self.assertEqual(len(res),2,"Items have not been paginated")
