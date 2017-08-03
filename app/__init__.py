@@ -25,7 +25,6 @@ def create_app(config_name):
 	app.config.from_object(app_config[config_name]) #loads the configuration from imported dictionary
 	app.config.from_pyfile('config.py')
 	app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-	app.config['SESSION_TYPE'] = 'filesystem'
 	app.register_blueprint(blueprint)
 	db.init_app(app)
 
