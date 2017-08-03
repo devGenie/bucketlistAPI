@@ -27,15 +27,29 @@ class BucketListCrud(Resource):
 
 	@authenticate
 	def get(self,user,bucketlist_id=None,*arg,**kwargs):
-		results=[]
+		results=None
 		if bucketlist_id:
 			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 			if bucketlist:
 				results={"id":bucketlist.id,"name":bucketlist.name,"description":bucketlist.description}
 		else:
-			results=[{"id":item.id,"name":item.name,"description":item.description} for item in user.bucketlists]
+			search_term=request.args.get("search")
+			bucketlists=None
+			page=1
+			items_per_page=10
+			if request.args.get("page"):
+				page=int(request.args.get("page"))
+			if request.args.get("pagesize"):
+				items_per_page=int(request.args.get("pagesize"))
+			if search_term:
+				bucketlists=Bucketlists.query.select_from(Users).join(Users.bucketlists).filter(Bucketlists.user==user.id,bucketlists.name.ilike(search)).paginate(page,items_per_page).items
+			else:
+				bucketlists=Bucketlists.query.select_from(Users).join(Users.bucketlists).filter(Bucketlists.user==user.id).paginate(page,items_per_page).items
 
-		if len(results)>0:
+			if bucketlists:
+				results=[{"id":item.id,"name":item.name,"description":item.description} for item in bucketlists]
+			
+		if results:
 			data={"status":"success","data":results}
 			return data,200
 		else:
