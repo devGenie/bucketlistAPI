@@ -53,31 +53,32 @@ class BucketListItemCrud(Resource):
 				return data,200
 		else:
 			search_term=request.args.get("search")
+			page=1
+			items_per_page=10
+			if request.args.get("page"):
+				page=int(request.args.get("page"))
+			if request.args.get("pagesize"):
+				items_per_page=int(request.args.get("pagesize"))
+
+			bucketlists=None
 			if search_term:
 				search="%{}%".format(search_term)
-				items=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id,BucketlistItems.name.ilike(search)).all()
-				
-				if items:
-					results=[{"id":item.id,
-								"name":item.name,
-								"date_added":item.date_added.strftime("%b/%d/%y"),
-								"date_completed":item.date_completed,
-								"complete_status":item.complete_status} for item in items]
-					data={"status":"success","message":"Items retrieved successfully","data":results}
-					return data,200
+				bucketlists=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id,BucketlistItems.name.ilike(search)).paginate(page,items_per_page).items
 			else:
-				bucketlist=Bucketlists.query.filter_by(user=user.id,id=bucketlist_id).first()
-				if bucketlist:
-					results=[{"id":item.id,
+				bucketlists=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id).paginate(page,items_per_page).items
+
+			if bucketlists:
+				results=[{"id":item.id,
 								"name":item.name,
 								"date_added":item.date_added.strftime("%b/%d/%y"),
 								"date_completed":item.date_completed,
-								"complete_status":item.complete_status} for item in bucketlist.items]
-					data={"status":"success","message":"Items retrieved successfully","data":results}
-					return data,200
-				else:
-					data={"status":"failed","message":"Items not retrieved"}
-					return data,200
+								"complete_status":item.complete_status} for item in bucketlists]
+				print(results)
+				data={"status":"success","message":"Items retrieved successfully","data":results}
+				return data,200
+			else:
+				data={"status":"failed","message":"Items not retrieved"}
+				return data,200
 
 	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
