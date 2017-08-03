@@ -121,11 +121,17 @@ class TestBucketListItemCrud(unittest.TestCase):
 		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
 		res2=json.loads(fetch_result.data)['data']
 		self.assertCountEqual(combined,res2,"Search was not successful")
+
 	#def test_bucketlist_items_exist_after_deleting_bucketlist(self):
 	#	pass
 
-	#def test_add_bucketlist_item_after_logout(self):
-	#	pass
+	def test_add_bucketlist_item_after_logout(self):
+		"""Test if a bucketlist item is added after a user logs out"""
+		self.client.get("api/v1/auth/logout",headers={"Authorization":self.token})
+		bucketlist_item={"name":"Item 1"}
+		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
+		self.assertEqual(result.status_code,409,"Bucketlist item was added after logout")
+
 
 
 	def tearDown(self):
