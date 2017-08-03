@@ -130,6 +130,14 @@ class TestBucketListItemCrud(unittest.TestCase):
 		res=json.loads(fetch_result.data)
 		self.assertNotIn("data",res,"items not deleted after deleted bucketlist")
 
+	def test_bucketlist_items_added_after_deleting_bucketlist(self):
+		""" Test if a bucketlist item exists after deleting a bucketlist"""
+		bucket_url="api/v1/bucketlists/{}".format(self.bucketlist_id)
+		self.client.delete(bucket_url,headers={"Authorization":self.token})
+		bucketlist_item={"name":"Item 1"}
+		result=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item)
+		self.assertNotEqual(result.status_code,201,"Bucketlist Item has been added after delete")
+
 	def test_add_bucketlist_item_after_logout(self):
 		"""Test if a bucketlist item is added after a user logs out"""
 		self.client.get("api/v1/auth/logout",headers={"Authorization":self.token})
