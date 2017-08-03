@@ -117,10 +117,10 @@ class TestBucketListItemCrud(unittest.TestCase):
 		res_data1=json.loads(result.data)['data']
 		res_data2=json.loads(result1.data)['data']
 		combined=[res_data1,res_data2]
-		item_url=self.baseUrl+"?search=just"
+		item_url=self.baseUrl+"?search=Just"
 		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
 		res2=json.loads(fetch_result.data)['data']
-		self.assertEqual(combined,res2,"Search was not successful")
+		self.assertCountEqual(combined,res2,"Search was not successful")
 	#def test_bucketlist_items_exist_after_deleting_bucketlist(self):
 	#	pass
 
