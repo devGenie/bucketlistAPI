@@ -76,6 +76,24 @@ class TestBucketListItemCrud(unittest.TestCase):
 		res=json.loads(fetch_result.data)['data']
 		self.assertEqual(res,items_data,"Items have not been retrieved successfully")
 
+	def test_pagination(self):
+		""" Test if bucket list items results are paginated """
+		bucketlist_item1={"name":"Item 1"}
+		bucketlist_item2={"name":"Item 2"}
+		bucketlist_item3={"name":"Item 3"}
+		bucketlist_item4={"name":"Item 4"}
+
+		self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item1)
+		self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item2)
+		self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item3)
+		self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item4)
+	
+		pagination_request=self.baseUrl+"?page=1&pagesize=2"
+		print(pagination_request)
+		fetch_result=self.client.get(pagination_request,headers={"Authorization":self.token})
+		res=json.loads(fetch_result.data)['data']
+		self.assertEqual(len(res),2,"Items have not been paginated")
+
 	def test_delete_bucketlist_item(self):
 		""" Test if a bucket list item can be deleted"""
 		bucketlist_item={"name":"Item 1"}
