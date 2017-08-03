@@ -3,14 +3,28 @@ from flask_restplus import Resource
 from app.models.bucketlists import Bucketlists
 from app.models.bucketlistItems import BucketlistItems
 from app.endpoints.users_endpoint import authenticate
+from flask_restplus import fields
 from flask import request
+
+blog_post = api.model('Blog post', {
+    'id': fields.Integer(description='The unique identifier of a blog post'),
+    'title': fields.String(required=True, description='Article title'),
+    'body': fields.String(required=True, description='Article content'),
+    'status': fields.String(required=True, enum=['DRAFT', 'PUBLISHED', 'DELETED']),
+    'pub_date': fields.DateTime,
+})
 
 ns = api.namespace("bucketlists",description = "Use these endpoints to manipulate bucketlist data")
 @ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>","/<int:bucketlist_id>/items/")
 class BucketListItemCrud(Resource):
 	""" Perform crud operations on bucketlist items """
 	@authenticate
+	@api.expect(blog_post)
 	def post(self,user,bucketlist_id,*arg,**kwargs):
+		"""
+			 Add items to a bucketlist 
+		"""
+
 		name=request.data['name']
 		bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 		if bucketlist:
@@ -36,7 +50,15 @@ class BucketListItemCrud(Resource):
 
 	@authenticate
 	def get(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
-		if bucketlist_item:
+		""" Retrieve items from the bucketlist 
+			> You need to be logged in to proceed with this endpoint, login and pass
+			  the obtained token as a value in the Authorization field of the header
+			> Also pass the bucketlist ID as a parameter in the url for example api/v1/bucketlists/1/
+			  to add an item to that particular bucket list. If a user is not logged in, they cannot proceed
+			> Specify a bucket list item id to retrieve a particular bucket list or dont provide one to retrieve all
+			   items for that particular bucket list
+		"""
+		if bucketlist_item: #checking if bucket item id is provided
 			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,BucketlistItems.id==bucketlist_item,Bucketlists.id==bucketlist_id).first()
 			if item:
 				item_data={
@@ -82,6 +104,10 @@ class BucketListItemCrud(Resource):
 
 	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
+		""" This end point edits the bucket list item specified in the url, An authorisation token obtained after logging
+			in should be passed inside the authorisation header to proceed with this proceess.
+			> A bucketlist id and a bucketlist item id should be provided to identify the bucket list
+			"""
 		if bucketlist_item:
 			name=request.data['name']
 			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id,BucketlistItems.id==bucketlist_item).first()
@@ -130,6 +156,13 @@ class BucketListItemCrud(Resource):
 class CompleteItem(Resource):
 	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
+		""" Mark a bucket list item as complete 
+			> You need to be logged in to proceed with this endpoint, login and pass
+			  the obtained token as a value in the Authorization field of the header
+			> Also pass the bucketlist ID as a parameter in the url for example api/v1/bucketlists/1/
+			  to add an item to that particular bucket list. If a user is logged in, they cannot mark an item as complete
+		"""
+
 		if bucketlist_item:
 			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id,BucketlistItems.id==bucketlist_item).first()
 			if item:
