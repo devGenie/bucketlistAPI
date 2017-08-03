@@ -33,7 +33,7 @@ class BucketListItemCrud(Resource):
 	@authenticate
 	def get(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
 		if bucketlist_item:
-			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,BucketlistItems.id==bucketlist_item).first()
+			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,BucketlistItems.id==bucketlist_item,Bucketlists.id==bucketlist_id).first()
 			if item:
 				item_data={
 							"id":item.id,
@@ -48,15 +48,32 @@ class BucketListItemCrud(Resource):
 				data={"status":"failed","message":"Item not found"}
 				return data,200
 		else:
-			bucketlist=Bucketlists.query.filter_by(user=user.id,id=bucketlist_id).first()
-			if bucketlist:
-				results=[{"id":item.id,
-							"name":item.name,
-							"date_added":item.date_added.strftime("%b/%d/%y"),
-							"date_completed":item.date_completed,
-							"complete_status":item.complete_status} for item in bucketlist.items]
-				data={"status":"success","message":"Items retrieved successfully","data":results}
-				return data,200
+			search_term=request.args.get("search")
+			if search_term:
+				search="%{}%".format(search_term)
+				items=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id,BucketlistItems.name.ilike(search)).all()
+				
+				if items:
+					results=[{"id":item.id,
+								"name":item.name,
+								"date_added":item.date_added.strftime("%b/%d/%y"),
+								"date_completed":item.date_completed,
+								"complete_status":item.complete_status} for item in items]
+					data={"status":"success","message":"Items retrieved successfully","data":results}
+					return data,200
+			else:
+				bucketlist=Bucketlists.query.filter_by(user=user.id,id=bucketlist_id).first()
+				if bucketlist:
+					results=[{"id":item.id,
+								"name":item.name,
+								"date_added":item.date_added.strftime("%b/%d/%y"),
+								"date_completed":item.date_completed,
+								"complete_status":item.complete_status} for item in bucketlist.items]
+					data={"status":"success","message":"Items retrieved successfully","data":results}
+					return data,200
+				else:
+					data={"status":"failed","message":"Items not retrieved"}
+					return data,200
 
 	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
