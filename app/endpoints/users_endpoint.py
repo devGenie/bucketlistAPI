@@ -6,14 +6,44 @@ from flask import request
 from functools import wraps
 from app.database import db
 from flask import request
+from flask_restplus import fields
 import bcrypt
 
+registration_response = api.model('Registration response', {
+    'id': fields.Integer(description='User ID of the new user',example=1),
+    'status': fields.String(description='Returns either success or failed',example="success"),
+    'message': fields.String(description='Description of the status',example="User registered successfully"),
+
+})
+
+registration_requirements=api.model("Register User",{
+	"email":fields.String(required=True,description="email address",example="genie@mail.com"),
+	"first_name":fields.String(description="Lirst name",example="Dev"),
+	"last_name":fields.String(description="Last Name",example="Genie"),
+	"password":fields.String(description="Password",example="hotshots")
+	})
+
+login_response = api.model('Registration response', {
+    'status': fields.String(description='Returns either success or failed',example="success"),
+    'message': fields.String(description='Description of the status',example="User logged in successfully"),
+    'auth': fields.String(description='Token to be used for auth'),
+
+})
+
+logout_response=api.model('Logout response', {
+    'status': fields.String(description='Returns either success or failed',example="success"),
+    'message': fields.String(description='Description of the status',example="User logged out successfully"),
+})
+
+login_requirements=api.model("Login User",{
+	"email":fields.String(required=True,description="email address",example="genie@mail.com"),
+	"password":fields.String(description="Password",example="hotshots")
+	})
 
 ns = api.namespace(
     "auth", description="Use these endpoints to create user accounts and login into the application")
 
 def authenticate(func):
-	""" A wrapper to check and verify if access tokens are valid"""
 	wraps(func)
 	def inner_methos(*args,**kwargs):
 		if "Authorization" in request.headers:
@@ -32,9 +62,10 @@ def authenticate(func):
 
 @ns.route("/register")
 class Register(Resource):
-    """Register user into the database"""
-
+    @api.expect(registration_requirements)
+    @api.marshal_with(registration_response)
     def post(self):
+        """Register user into the database"""
         my_email = request.data['email']
         exists = db.session.query(db.exists().where(User.email == my_email)).scalar()
         if exists:
@@ -58,8 +89,12 @@ class Register(Resource):
 
 @ns.route("/login")
 class Login(Resource):
-	"""Log user into the application and produce a token that will be used for authentication"""
+	@api.expect(login_requirements)
+	@api.marshal_with(login_response)
 	def post(self):
+		"""Log user into the application 
+
+			Pass the returned token with the Authorization header to authenticate"""
 		my_email=request.data['email']
 		password=request.data['password'].encode("utf8")
 
@@ -77,9 +112,9 @@ class Login(Resource):
 
 @ns.route("/password_reset")
 class ResetPassword(Resource):
-	""" Reset user password """
 	@authenticate
 	def post(self,user,*args,**kwargs):
+		"""Reset a user password"""
 		old_password=request.data['old_password']
 		new_password=request.data['new_password']
 		if bcrypt.checkpw(old_password.encode("utf8"),user.password):
@@ -93,9 +128,10 @@ class ResetPassword(Resource):
 
 @ns.route("/logout")
 class Logout(Resource):
-	"""Log user out of the application"""
 	@authenticate
+	@api.marshal_with(login_response)
 	def get(self,token,*arg,**kwargs):
+		"""Log user out of the application"""
 		blacklist=BlackList(token)
 		blacklist.save()
 		if blacklist.id:

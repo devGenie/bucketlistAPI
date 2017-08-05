@@ -14,7 +14,7 @@ blog_post = api.model('Blog post', {
     'pub_date': fields.DateTime,
 })
 
-ns = api.namespace("bucketlists",description = "Use these endpoints to manipulate bucketlist data")
+ns = api.namespace("bucketlists",description = "Use these endpoints to manipulate bucketlist item data")
 @ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>","/<int:bucketlist_id>/items/")
 class BucketListItemCrud(Resource):
 	""" Perform crud operations on bucketlist items """
@@ -156,11 +156,12 @@ class BucketListItemCrud(Resource):
 class CompleteItem(Resource):
 	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
-		""" Mark a bucket list item as complete 
-			> You need to be logged in to proceed with this endpoint, login and pass
-			  the obtained token as a value in the Authorization field of the header
-			> Also pass the bucketlist ID as a parameter in the url for example api/v1/bucketlists/1/
-			  to add an item to that particular bucket list. If a user is logged in, they cannot mark an item as complete
+		""" Mark a bucket list item as complete.
+
+			You need to be logged in to proceed with this endpoint, login and pass
+			the obtained token as a value in the Authorization field of the header
+			Also pass the bucketlist ID as a parameter in the url for example api/v1/bucketlists/1/
+			to add an item to that particular bucket list. If a user is logged in, they cannot mark an item as complete
 		"""
 
 		if bucketlist_item:
