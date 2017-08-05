@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/devGenie/bucketlistAPI.svg?branch=master)](https://travis-ci.org/devGenie/bucketlistAPI)
-
-[![Code Health](https://landscape.io/github/devGenie/bucketlistAPI/master/landscape.svg?style=flat)](https://landscape.io/github/devGenie/bucketlistAPI/master)
+[![Build Status](https://travis-ci.org/devGenie/bucketlistAPI.svg?branch=master)](https://travis-ci.org/devGenie/bucketlistAPI) [![Code Health](https://landscape.io/github/devGenie/bucketlistAPI/master/landscape.svg?style=flat)](https://landscape.io/github/devGenie/bucketlistAPI/master) [![Coverage Status](https://coveralls.io/repos/github/devGenie/bucketlistAPI/badge.svg?branch=master)](https://coveralls.io/github/devGenie/bucketlistAPI?branch=master)
 
 
 
