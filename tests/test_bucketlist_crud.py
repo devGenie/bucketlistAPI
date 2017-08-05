@@ -55,7 +55,7 @@ class TestBucketListCrud(unittest.TestCase):
 		result2=self.client.post(self.baseUrl,data=bucketlist_data2,headers={"Authorization":self.token})
 		self.assertEqual(result2.status_code,201,"Bucketlist2 has not been created")
 		retrieved=self.client.get(self.baseUrl,headers={"Authorization":self.token})
-		expected=[{"name":"bucket1","description":"This is a test bucketlist","id":json.loads(result1.data)["id"]},{"name":"bucket2","description":"This is a test bucketlist","id":json.loads(result2.data)["id"]}]
+		expected=[{"name":"bucket1","description":"This is a test bucketlist","id":json.loads(result1.data)['data']["id"]},{"name":"bucket2","description":"This is a test bucketlist","id":json.loads(result2.data)["data"]["id"]}]
 		self.assertListEqual(json.loads(retrieved.data)['data'],expected,"Bucket lists have not been retrieved")
 
 	def test_get_single_bucketlist(self):
@@ -67,7 +67,7 @@ class TestBucketListCrud(unittest.TestCase):
 		result2=self.client.post(self.baseUrl,data=bucketlist_data2,headers={"Authorization":self.token})
 		self.assertEqual(result2.status_code,201,"Bucketlist2 has not been created")
 		retrieved=self.client.get("api/v1/bucketlists/1",headers={"Authorization":self.token})
-		expected={"name":"bucket1","description":"This is a test bucketlist","id":json.loads(result1.data)["id"]}
+		expected={"name":"bucket1","description":"This is a test bucketlist","id":json.loads(result1.data)['data']["id"]}
 		self.assertDictEqual(json.loads(retrieved.data)['data'],expected,"Bucket lists have not been retrieved")
 
 	def test_get_none_existent_bucketlist(self):
