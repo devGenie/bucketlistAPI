@@ -12,6 +12,9 @@ class BucketListCrud(Resource):
 	""" Perform Crud operations on Bucketlist """
 	@authenticate
 	def post(self,user,*arg,**kwargs):
+		"""
+			create a bucket list
+		"""
 		previous=len(user.bucketlists)
 		name=request.data['name']
 		description=request.data['description']
@@ -19,7 +22,8 @@ class BucketListCrud(Resource):
 		res=user.bucketlists
 		if len(res) > previous:
 			latest=res[len(res)-1]
-			data={"status":"success","message":"Bucketlist added successfully","id":latest.id}
+			bucketlist={"id":latest.id,"name":latest.name,"description":latest.description}
+			data={"status":"success","message":"Bucketlist added successfully","data":bucketlist}
 			return data,201
 		else:
 			data={"status":"failed","message":"Bucketlist not added"}
@@ -27,6 +31,9 @@ class BucketListCrud(Resource):
 
 	@authenticate
 	def get(self,user,bucketlist_id=None,*arg,**kwargs):
+		"""
+			Fetch either a bucket list or a list of bucketlists
+		"""
 		results=None
 		if bucketlist_id:
 			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
@@ -58,6 +65,9 @@ class BucketListCrud(Resource):
 
 	@authenticate
 	def put(self,user,bucketlist_id=None,*arg,**kwargs):
+		"""
+			Edit a bucketlist
+		"""
 		if bucketlist_id:
 			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 
@@ -79,6 +89,9 @@ class BucketListCrud(Resource):
 
 	@authenticate
 	def delete(self,user,bucketlist_id=None,*arg,**kwargs):
+		"""
+			Delete a bucketlist
+		"""
 		if bucketlist_id:
 			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 			bucketlist.delete()
