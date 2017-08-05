@@ -9,8 +9,17 @@ from flask import request
 from flask_restplus import fields
 import bcrypt
 
+reset_parameters=api.model("Reset Password parameters",{
+	"old_password":fields.String(decription="Provide the previous password"),
+	"new_password":fields.String(desciption="Provide the new password you want to use")
+	})
+
+reset_response=api.model("Reset password response",{
+	"status":fields.String(description="Status of the request"),
+	"message":fields.String(description="Message returned from the server")
+	})
+
 registration_response = api.model('Registration response', {
-    'id': fields.Integer(description='User ID of the new user',example=1),
     'status': fields.String(description='Returns either success or failed',example="success"),
     'message': fields.String(description='Description of the status',example="User registered successfully"),
 
@@ -54,9 +63,10 @@ def authenticate(func):
 				kwargs['token']=token
 				return func(*args,**kwargs)
 			else:
-				return None,409
+				return {"status":"failed","message":"Not authorised"},409
 		else:
-			return None,409
+			return {"status":"failed","message":"Not authorised"},409
+	inner_methos.__doc__=func.__doc__
 	return inner_methos
 
 
@@ -94,7 +104,7 @@ class Login(Resource):
 	def post(self):
 		"""Log user into the application 
 
-			Pass the returned token with the Authorization header to authenticate"""
+			Pass the returned auth token with the Authorization header to authenticate"""
 		my_email=request.data['email']
 		password=request.data['password'].encode("utf8")
 
@@ -112,9 +122,15 @@ class Login(Resource):
 
 @ns.route("/password_reset")
 class ResetPassword(Resource):
+	@api.expect(reset_parameters)
+	@api.marshal_with(reset_response,mask="Authorization")
 	@authenticate
 	def post(self,user,*args,**kwargs):
-		"""Reset a user password"""
+		"""Reset a user password
+			
+		   Requires the auth token recieved after registration to be passed inside the Authorization
+		   header in order to authenticate the user before proceeding
+		"""
 		old_password=request.data['old_password']
 		new_password=request.data['new_password']
 		if bcrypt.checkpw(old_password.encode("utf8"),user.password):
@@ -129,7 +145,7 @@ class ResetPassword(Resource):
 @ns.route("/logout")
 class Logout(Resource):
 	@authenticate
-	@api.marshal_with(login_response)
+	@api.marshal_with(logout_response)
 	def get(self,token,*arg,**kwargs):
 		"""Log user out of the application"""
 		blacklist=BlackList(token)
