@@ -22,7 +22,7 @@ class TestBucketListItemCrud(unittest.TestCase):
 			self.token=json.loads(res.data)['auth'] #save the auth token
 			bucketlist_data={"name":"bucket1","description":"This is a test bucketlist"}
 			result=self.client.post("api/v1/bucketlists/",data=bucketlist_data,headers={"Authorization":self.token}) #create a test bucketlist
-			self.bucketlist_id=json.loads(result.data)['id']
+			self.bucketlist_id=json.loads(result.data)['data']['id']
 			self.baseUrl="api/v1/bucketlists/{}/items/".format(self.bucketlist_id)
 
 	def test_add_bucketlist_item(self):
