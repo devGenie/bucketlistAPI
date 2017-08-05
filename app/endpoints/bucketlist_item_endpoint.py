@@ -6,23 +6,29 @@ from app.endpoints.users_endpoint import authenticate
 from flask_restplus import fields
 from flask import request
 
-blog_post = api.model('Blog post', {
-    'id': fields.Integer(description='The unique identifier of a blog post'),
-    'title': fields.String(required=True, description='Article title'),
-    'body': fields.String(required=True, description='Article content'),
-    'status': fields.String(required=True, enum=['DRAFT', 'PUBLISHED', 'DELETED']),
-    'pub_date': fields.DateTime,
+item_fields = api.model('Items', {
+    'name': fields.String(example="Hello World",description='The unique identifier of a blog post')
 })
+
+items_returned=api.model("Items Responses",{
+	'id': fields.Integer(required=True, description='Id of the created item'),
+    'name': fields.String(required=True, description='Name of the item'),
+    'date_added': fields.String(required=True, description="Date Item was added"),
+    'date_completed': fields.String(required=True,description="Date item was completed")
+	})
 
 ns = api.namespace("bucketlists",description = "Use these endpoints to manipulate bucketlist item data")
 @ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>","/<int:bucketlist_id>/items/")
 class BucketListItemCrud(Resource):
 	""" Perform crud operations on bucketlist items """
+	@api.expect(item_fields)
 	@authenticate
-	@api.expect(blog_post)
 	def post(self,user,bucketlist_id,*arg,**kwargs):
 		"""
 			 Add items to a bucketlist 
+
+			 To perform this, one needs to be authenticated. Pass the auth token recieved in the login response body
+			 as Authorization header in order to continue with this process
 		"""
 
 		name=request.data['name']
@@ -51,6 +57,7 @@ class BucketListItemCrud(Resource):
 	@authenticate
 	def get(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
 		""" Retrieve items from the bucketlist 
+
 			> You need to be logged in to proceed with this endpoint, login and pass
 			  the obtained token as a value in the Authorization field of the header
 			> Also pass the bucketlist ID as a parameter in the url for example api/v1/bucketlists/1/
@@ -104,9 +111,11 @@ class BucketListItemCrud(Resource):
 
 	@authenticate
 	def put(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
-		""" This end point edits the bucket list item specified in the url, An authorisation token obtained after logging
+		""" This end point edits the bucket list item specified in the url
+
+			An authorisation token obtained after logging
 			in should be passed inside the authorisation header to proceed with this proceess.
-			> A bucketlist id and a bucketlist item id should be provided to identify the bucket list
+			A bucketlist id and a bucketlist item id should be provided to identify the bucket list
 			"""
 		if bucketlist_item:
 			name=request.data['name']
@@ -139,6 +148,9 @@ class BucketListItemCrud(Resource):
 
 	@authenticate
 	def delete(self,user,bucketlist_id,bucketlist_item=None,*arg,**kwargs):
+		"""
+			Delete bucketlist items
+		"""
 		if bucketlist_item:
 			item=BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(Bucketlists.user==user.id,Bucketlists.id==bucketlist_id).first()
 			if item:
