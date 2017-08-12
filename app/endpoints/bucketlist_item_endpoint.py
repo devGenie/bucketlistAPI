@@ -156,7 +156,7 @@ class BucketListItemCrud(Resource):
 			if item:
 				item.delete()
 				data={"status":"success","message":"Item deleted successfully"}
-				return "data",200
+				return data,200
 			else:
 				data={"status":"failed","message":"Item does not exist"}
 				return data,200
