@@ -96,6 +96,7 @@ class BucketListCrud(Resource):
 		"""
 		if bucketlist_id:
 			bucketlist = db.session.query(BucketlistItems.bucketlist).filter(Bucketlists.id=bucketlist_id,Bucketlists.user=user.id).first()
+			
 			#bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 			if bucketlist:
 				bucketlist.delete()
