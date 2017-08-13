@@ -100,7 +100,7 @@ class BucketListItemCrud(Resource):
 				results=[{"id":item.id,
 								"name":item.name,
 								"date_added":item.date_added.strftime("%b/%d/%y"),
-								"date_completed":item.date_completed,
+								"date_completed":item.complete_status? item.date_completed.strftime("%b/%d/%y"):item.date_completed.strftime,
 								"complete_status":item.complete_status} for item in bucketlists]
 				print(results)
 				data={"status":"success","message":"Items retrieved successfully","data":results}
