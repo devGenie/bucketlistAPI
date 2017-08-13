@@ -2,7 +2,7 @@ from app.restplus import api
 from flask_restplus import Resource
 from app.models.users import Users as Users
 from app.models.bucketlists import Bucketlists
-from app.models.bucketlistitems import BucketlistItems
+from app.models.bucketlistItems import BucketlistItems
 from app.database import db
 from app.endpoints.users_endpoint import authenticate
 from flask import request
