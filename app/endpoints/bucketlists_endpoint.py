@@ -99,7 +99,8 @@ class BucketListCrud(Resource):
 			
 			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 			if bucketlist:
-				item.delete for item in bucketlist.items
+				for item in bucketlist.items:
+					item.delete
 				bucketlist.delete()
 				data={"status":"success","message":"Bucketlist deleted successfully"}
 				return data,200
