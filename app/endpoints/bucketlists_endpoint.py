@@ -2,6 +2,8 @@ from app.restplus import api
 from flask_restplus import Resource
 from app.models.users import Users as Users
 from app.models.bucketlists import Bucketlists
+from app.models.bucketlistitems import BucketlistItems
+from app.database import db
 from app.endpoints.users_endpoint import authenticate
 from flask import request
 
@@ -93,7 +95,8 @@ class BucketListCrud(Resource):
 			Delete a bucketlist
 		"""
 		if bucketlist_id:
-			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
+			bucketlist = db.session.query(BucketlistItems.bucketlist).filter(Bucketlists.id=bucketlist_id,Bucketlists.user=user.id).first()
+			#bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 			if bucketlist:
 				bucketlist.delete()
 				data={"status":"success","message":"Bucketlist deleted successfully"}
