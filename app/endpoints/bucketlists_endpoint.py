@@ -94,9 +94,13 @@ class BucketListCrud(Resource):
 		"""
 		if bucketlist_id:
 			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
-			bucketlist.delete()
-			data={"status":"success","message":"Bucketlist deleted successfully"}
-			return data,200
+			if bucketlist:
+				bucketlist.delete()
+				data={"status":"success","message":"Bucketlist deleted successfully"}
+				return data,200
+			else:
+				data={"status":"failed","message":"Bucketlist failed to delete"}
+				return data,200
 		else:
 			data={"status":"failed","message":"No bucketlist provided"}
 			return data,404
