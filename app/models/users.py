@@ -31,7 +31,7 @@ class Users(db.Model):
 		db.session.delete(self)
 		db.session.commit()
 
-	def generate_auth(self,expires=600):
+	def generate_auth(self,expires=360000):
 		secret=os.getenv("SECRET")
 		serialized=serializer(secret,expires_in=expires)
 		return serialized.dumps({"id":self.id})
