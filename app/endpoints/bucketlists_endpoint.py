@@ -79,7 +79,7 @@ class BucketListCrud(Resource):
 				if request.data['description']:
 					bucketlist.description=request.data['description']
 				bucketlist.save()
-				data={"status":"success","message":"Bucketlist updated successfully"}
+				data={"status":"success","message":"Bucketlist updated successfully","data":{"id":bucketlist_id,"name":request.data['name'],"description":request.data['description']}}
 				return data,201
 			else:
 				data={"status":"failed","message":"No bucketlist provided"}
