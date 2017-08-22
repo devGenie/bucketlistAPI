@@ -51,7 +51,7 @@ class BucketListCrud(Resource):
 			if request.args.get("pagesize"):
 				items_per_page=int(request.args.get("pagesize"))
 			if search_term:
-				bucketlists=Bucketlists.query.select_from(Users).join(Users.bucketlists).filter(Bucketlists.user==user.id,bucketlists.name.ilike(search)).paginate(page,items_per_page).items
+				bucketlists=Bucketlists.query.select_from(Users).join(Users.bucketlists).filter(Bucketlists.user==user.id,Bucketlists.name.ilike(search_term)).paginate(page,items_per_page).items
 			else:
 				bucketlists=Bucketlists.query.select_from(Users).join(Users.bucketlists).filter(Bucketlists.user==user.id).paginate(page,items_per_page).items
 
