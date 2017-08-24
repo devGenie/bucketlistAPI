@@ -27,9 +27,17 @@ class Bucketlists(db.Model):
 
 	def add_item(self,name):
 		if name:
-			item=BucketlistItems(name)
-			self.items.append(item)
-			db.session.commit()
+			find_item=BucketlistItems.query.filter_by(name=name,bucketlist=self.id).first()
+
+			if find_item:
+				return False
+			else:
+				item=BucketlistItems(name)
+				self.items.append(item)
+				db.session.commit()
+				return item
+		else:
+			return False
 
 	def delete(self):
 		db.session.delete(self)
