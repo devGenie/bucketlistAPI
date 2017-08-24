@@ -17,18 +17,15 @@ class BucketListCrud(Resource):
 		"""
 			create a bucket list
 		"""
-		previous=len(user.bucketlists)
 		name=request.data['name']
 		description=request.data['description']
-		user.add_bucket_list(name,description)
-		res=user.bucketlists
-		if len(res) > previous:
-			latest=res[len(res)-1]
-			bucketlist={"id":latest.id,"name":latest.name,"description":latest.description}
+		res=user.add_bucket_list(name,description)
+		if res:
+			bucketlist={"id":res.id,"name":res.name,"description":res.description}
 			data={"status":"success","message":"Bucketlist added successfully","data":bucketlist}
 			return data,201
 		else:
-			data={"status":"failed","message":"Bucketlist not added"}
+			data={"status":"failed","message":"Bucketlist not added, bucketlist with same name exists"}
 			return data,200
 
 	@authenticate
