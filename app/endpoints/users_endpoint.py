@@ -122,8 +122,6 @@ class Login(Resource):
 
 @ns.route("/password_reset")
 class ResetPassword(Resource):
-	@api.expect(reset_parameters)
-	@api.marshal_with(reset_response,mask="Authorization")
 	@authenticate
 	def post(self,user,*args,**kwargs):
 		"""Reset a user password
