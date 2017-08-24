@@ -34,21 +34,18 @@ class BucketListItemCrud(Resource):
 		name=request.data['name']
 		bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 		if bucketlist:
-			initial_count=len(bucketlist.items)
-			bucketlist.add_item(name)
-			new_count=len(bucketlist.items)
-			if new_count>initial_count:
-				new_item=bucketlist.items[-1]
+			item=bucketlist.add_item(name)
+			if item:
 				item_data={
-						   "id":new_item.id,
-						   "name":new_item.name,
-						   "date_added":new_item.date_added.strftime("%b/%d/%y"),
-						   "date_completed":new_item.date_completed,
-						   "complete_status":new_item.complete_status}
+						   "id":item.id,
+						   "name":item.name,
+						   "date_added":item.date_added.strftime("%b/%d/%y"),
+						   "date_completed":item.date_completed,
+						   "complete_status":item.complete_status}
 				data={"status":"success","message":"Item added successfully","data":item_data}
 				return data,201
 			else:
-				data={"status":"failed","message":"Item not added successfully"}
+				data={"status":"failed","message":"Item not added successfully, Same item exists in the database"}
 				return data,200
 		else:
 			data={"status":"failed","message":"Bucketlist does not exist"}
