@@ -71,12 +71,12 @@ class BucketListCrud(Resource):
 			bucketlist=Bucketlists.query.filter_by(id=bucketlist_id,user=user.id).first()
 
 			if bucketlist:
-				if request.data['name']:
+				if 'name' in request.data:
 					bucketlist.edit(name=request.data['name'])
-				if request.data['description']:
-					bucketlist.description=request.data['description']
+				if 'description' in request.data:
+					bucketlist.edit(description=request.data['description'])
 				bucketlist.save()
-				data={"status":"success","message":"Bucketlist updated successfully","data":{"id":bucketlist_id,"name":request.data['name'],"description":request.data['description']}}
+				data={"status":"success","message":"Bucketlist updated successfully","data":{"id":bucketlist.id,"name":bucketlist.name,"description":bucketlist.description}}
 				return data,201
 			else:
 				data={"status":"failed","message":"No bucketlist provided"}
@@ -84,7 +84,7 @@ class BucketListCrud(Resource):
 
 		else:
 			data={"status":"failed","message":"No bucketlist provided"}
-			return data,404
+			return data,200
 
 	@authenticate
 	def delete(self,user,bucketlist_id=None,*arg,**kwargs):
