@@ -55,9 +55,14 @@ class Users(db.Model):
 			return user
 
 	def add_bucket_list(self,name,description):
-		bucketlist=Bucketlists(name=name,description=description)
-		self.bucketlists.append(bucketlist)
-		db.session.commit()
+		findBucketList=Bucketlists.query.filter_by(name=name,user=self.id).first()
+		if findBucketList:
+			return False
+		else:
+			bucketlist=Bucketlists(name=name,description=description)
+			self.bucketlists.append(bucketlist)
+			db.session.commit()
+			return bucketlist
 
 
 	def __repr__(self):
