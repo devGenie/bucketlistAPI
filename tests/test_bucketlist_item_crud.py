@@ -68,7 +68,7 @@ class TestBucketListItemCrud(unittest.TestCase):
 		added_result1=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item1)
 		self.assertEqual(added_result1.status_code,201,"Request was not successful")
 		bucketlist_item2={"name":"Item 2"}
-		added_result2=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item1)
+		added_result2=self.client.post(self.baseUrl,headers={"Authorization":self.token},data=bucketlist_item2)
 		self.assertEqual(added_result2.status_code,201,"Request was not successful")
 		items_data=[json.loads(added_result1.data)['data'],json.loads(added_result2.data)['data']]
 		fetch_result=self.client.get(self.baseUrl,headers={"Authorization":self.token})
