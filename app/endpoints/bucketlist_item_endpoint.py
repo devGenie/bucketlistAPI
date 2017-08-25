@@ -78,7 +78,7 @@ class BucketListItemCrud(Resource):
 				data={"status":"failed","message":"Item not found"}
 				return data,200
 		else:
-			search_term=request.args.get("search")
+			search_term=request.args.get("q")
 			page=1
 			items_per_page=10
 			if request.args.get("page"):

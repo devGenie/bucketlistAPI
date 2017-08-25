@@ -39,7 +39,7 @@ class BucketListCrud(Resource):
 			if bucketlist:
 				results={"id":bucketlist.id,"name":bucketlist.name,"description":bucketlist.description}
 		else:
-			search_term=request.args.get("search")
+			search_term=request.args.get("q")
 			bucketlists=None
 			page=1
 			items_per_page=10
