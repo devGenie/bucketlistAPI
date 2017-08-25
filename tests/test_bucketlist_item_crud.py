@@ -134,7 +134,7 @@ class TestBucketListItemCrud(unittest.TestCase):
 		res_data1=json.loads(result.data)['data']
 		res_data2=json.loads(result1.data)['data']
 		combined=[res_data1,res_data2]
-		item_url=self.baseUrl+"?search=Just"
+		item_url=self.baseUrl+"?q=Just"
 		fetch_result=self.client.get(item_url,headers={"Authorization":self.token})
 		res2=json.loads(fetch_result.data)['data']
 		self.assertCountEqual(combined,res2,"Search was not successful")
