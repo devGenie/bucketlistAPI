@@ -40,7 +40,7 @@ class BucketListItemCrud(Resource):
 						   "id":item.id,
 						   "name":item.name,
 						   "date_added":item.date_added.strftime("%b/%d/%y"),
-						   "date_completed":item.date_completed,
+						   "date_completed":str(item.date_completed),
 						   "complete_status":item.complete_status}
 				data={"status":"success","message":"Item added successfully","data":item_data}
 				return data,201
