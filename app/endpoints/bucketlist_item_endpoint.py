@@ -118,7 +118,7 @@ class BucketListItemCrud(Resource):
                 data = {"status": "failed", "message": "Items not retrieved"}
                 return data, 200
 
-    #@validate({'name':'{type':'text'})
+    @validate({'name':{'type':'text'}})
     @authenticate
     def put(self, user, bucketlist_id, bucketlist_item=None, *arg, **kwargs):
         """ This end point edits the bucket list item specified in the url
