@@ -2,10 +2,9 @@ from app.restplus import api
 from flask_restplus import Resource
 from app.models.users import Users as User
 from app.models.blacklist import BlackList
+from app.common.decorators import authenticate
 from flask import request
-from functools import wraps
 from app.database import db
-import re
 from flask import request
 from flask_restplus import fields
 import bcrypt
@@ -53,24 +52,9 @@ login_requirements=api.model("Login User",{
 ns = api.namespace(
     "auth", description="Use these endpoints to create user accounts and login into the application")
 
-def authenticate(func):
-	wraps(func)
-	def inner_methos(*args,**kwargs):
-		if "Authorization" in request.headers:
-			token=request.headers.get("Authorization")
-			user=User.verify_token(token)
-			if user:
-				kwargs['user']=user
-				kwargs['token']=token
-				return func(*args,**kwargs)
-			else:
-				return {"status":"failed","message":"Not authorised"},409
-		else:
-			return {"status":"failed","message":"Not authorised"},409
-	inner_methos.__doc__=func.__doc__
-	return inner_methos
 
-def validate(params):
+
+"""def validate(params):
     def validate_wrapper(func):
         wraps(func)
 
@@ -109,29 +93,12 @@ def validate(params):
 
         inner_method.__doc__ = func.__doc__
         return inner_method
-    return validate_wrapper
+    return validate_wrapper"""
 
 
 @ns.route("/register")
 class Register(Resource):
-    @validate({'first_name': {
-        'type': 'text',
-        'min-length': 4,
-        'max-length': 5
-    }, 'last_name': {
-        'type': 'text',
-        'min-length': 4,
-        'max-length': 5
-    }, 'email':
-        {
-        'type': 'email',
-    }, 'password': {
-        'type': 'text',
-        'min-length': 2
-    }, 'password': {
-        'type': 'text',
-        'min-length': 2
-    }})
+
     @api.expect(registration_requirements)
     @api.marshal_with(registration_response)
     def post(self):
