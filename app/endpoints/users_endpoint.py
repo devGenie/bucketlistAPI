@@ -2,7 +2,7 @@ from app.restplus import api
 from flask_restplus import Resource
 from app.models.users import Users as User
 from app.models.blacklist import BlackList
-from app.common.decorators import authenticate
+from app.common .decorators import authenticate,validate
 from flask import request
 from app.database import db
 from flask import request
@@ -52,53 +52,26 @@ login_requirements=api.model("Login User",{
 ns = api.namespace(
     "auth", description="Use these endpoints to create user accounts and login into the application")
 
-
-
-"""def validate(params):
-    def validate_wrapper(func):
-        wraps(func)
-
-        def inner_method(*args, **kwargs):
-            errors = {'missing': [], 'errors': []}
-            for key in params.keys():
-                if key in request.data:
-                    if params[key]['type'] == 'integer':
-                        regexp=re.compile(r"(^[0-9]*$#)")
-                        compare=request.data.get(key)
-                        if not regexp.match(compare):
-                            errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid integer'})
-
-                    if params[key]['type'] == 'text':
-                        regexp=re.compile(r"(^[a-zA-Z0-9]*$)")
-                        compare=request.data.get(key)
-                        if not regexp.match(compare):
-                            errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid string'})
-                        else:
-                            if params[key]['min-length'] and len(compare.strip()) < params[key]['min-length']:
-                                errors['errors'].append({'value':compare,'field type':key,'message':'Minimum length reached'})
-                                
-
-                    if params[key]['type'] == 'email':
-                        address = re.compile(
-                            r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
-                        compare=request.data.get(key)
-                        if not address.match(compare):
-                            errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid email'})
-                else:
-                    errors['missing'].append(key)
-            if len(errors['missing'])>0 or len(errors['errors'])>0:
-                return {'status':'failed','message':'Please check your input','errors':errors},400
-            else:
-                return func(*args,**kwargs)
-
-        inner_method.__doc__ = func.__doc__
-        return inner_method
-    return validate_wrapper"""
-
-
 @ns.route("/register")
 class Register(Resource):
-
+    @validate({'first_name': {
+        'type': 'text',
+        'min-length': 4,
+        'max-length': 5
+    }, 'last_name': {
+        'type': 'text',
+        'min-length': 4,
+        'max-length': 5
+    }, 'email':
+        {
+        'type': 'email',
+    }, 'password': {
+        'type': 'text',
+        'min-length': 2
+    }, 'password': {
+        'type': 'text',
+        'min-length': 2
+    }})
     @api.expect(registration_requirements)
     @api.marshal_with(registration_response)
     def post(self):
