@@ -4,7 +4,7 @@ from app.models.users import Users as Users
 from app.models.bucketlists import Bucketlists
 from app.models.bucketlistItems import BucketlistItems
 from app.database import db
-from app.endpoints.users_endpoint import authenticate
+from app.common .decorators import authenticate, validate
 from flask import request
 
 ns = api.namespace(
@@ -14,6 +14,13 @@ ns = api.namespace(
 @ns.route("/", "/<int:bucketlist_id>")
 class BucketListCrud(Resource):
     """ Perform Crud operations on Bucketlist """
+    @validate({'name':{
+              'type':'text'
+        },
+        'description':{
+        'type':'text'
+        }
+    })
     @authenticate
     def post(self, user, *arg, **kwargs):
         """
