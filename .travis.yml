@@ -16,6 +16,5 @@ before_script:
 
 # command to run tests
 script: 
-  - source .env
   - nosetests tests --with-cover --cover-package=app.endpoints
 after_success: coveralls
