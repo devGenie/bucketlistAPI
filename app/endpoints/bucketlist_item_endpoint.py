@@ -5,6 +5,7 @@ from app.models.bucketlistItems import BucketlistItems
 from app.endpoints.users_endpoint import authenticate
 from flask_restplus import fields
 from flask import request
+from app.common .decorators import authenticate, validate
 
 item_fields = api.model('Items', {
     'name': fields.String(example="Hello World", description='The unique identifier of a blog post')
@@ -24,7 +25,7 @@ ns = api.namespace(
 @ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>", "/<int:bucketlist_id>/items/")
 class BucketListItemCrud(Resource):
     """ Perform crud operations on bucketlist items """
-    @api.expect(item_fields)
+    @validate({'name':{"type":"text"}})
     @authenticate
     def post(self, user, bucketlist_id, *arg, **kwargs):
         """
@@ -117,6 +118,7 @@ class BucketListItemCrud(Resource):
                 data = {"status": "failed", "message": "Items not retrieved"}
                 return data, 200
 
+    #@validate({'name':'{type':'text'})
     @authenticate
     def put(self, user, bucketlist_id, bucketlist_item=None, *arg, **kwargs):
         """ This end point edits the bucket list item specified in the url
