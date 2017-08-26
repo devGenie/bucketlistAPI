@@ -28,30 +28,34 @@ def validate(params):
             errors = {'missing': [], 'errors': []}
             for key in params.keys():
                 if key in request.data:
-                    if params[key]['type'] == 'integer':
-                        regexp=re.compile(r"(^[0-9]*$#)")
-                        compare=request.data.get(key)
-                        if not regexp.match(compare):
-                            errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid integer'})
+                    if len(request.data.get(key))>0:
+                        if params[key]['type'] == 'integer':
+                            regexp=re.compile(r"(^[0-9]*$#)")
+                            compare=request.data.get(key)
+                            if not regexp.match(compare):
+                                errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid integer'})
 
-                    if params[key]['type'] == 'text':
-                        regexp=re.compile(r"(^[a-zA-Z0-9]*$)")
-                        compare=request.data.get(key)
-                        if not regexp.match(compare):
-                            errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid string'})
-                        else:
-                            if params[key]['min-length'] and len(compare.strip()) < params[key]['min-length']:
-                                errors['errors'].append({'value':compare,'field type':key,'message':'Minimum length reached'})
-                                
+                        if params[key]['type'] == 'text':
+                            regexp=re.compile(r"(^[a-zA-Z0-9]*$)")
+                            compare=request.data.get(key)
+                            if not regexp.match(compare):
+                                errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid string'})
+                            else:
+                                if params[key]['min-length'] and len(compare.strip()) < params[key]['min-length']:
+                                    errors['errors'].append({'value':compare,'field type':key,'message':'Minimum length reached'})
+                                    
 
-                    if params[key]['type'] == 'email':
-                        address = re.compile(
-                            r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
-                        compare=request.data.get(key)
-                        if not address.match(compare):
-                            errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid email'})
+                        if params[key]['type'] == 'email':
+                            address = re.compile(
+                                r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+                            compare=request.data.get(key)
+                            if not address.match(compare):
+                                errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid email'})
+                    else:
+                        errors['missing'].append(key)
                 else:
                     errors['missing'].append(key)
+                    
             if len(errors['missing'])>0 or len(errors['errors'])>0:
                 return {'status':'failed','message':'Please check your input','errors':errors},400
             else:
