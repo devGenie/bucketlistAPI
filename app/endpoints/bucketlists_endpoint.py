@@ -11,7 +11,7 @@ ns = api.namespace(
     "bucketlists", description="Use these endpoints to manipulate bucketlist data")
 
 
-@ns.route("/", "/<int:bucketlist_id>")
+@ns.route("/", "/<int:bucketlist_id>","/<int:bucketlist_id>/")
 class BucketListCrud(Resource):
     """ Perform Crud operations on Bucketlist """
     @validate({'name':{

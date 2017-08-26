@@ -22,7 +22,7 @@ ns = api.namespace(
     "bucketlists", description="Use these endpoints to manipulate bucketlist item data")
 
 
-@ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>", "/<int:bucketlist_id>/items/")
+@ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>", "/<int:bucketlist_id>/items/<int:bucketlist_item>/","/<int:bucketlist_id>/items/")
 class BucketListItemCrud(Resource):
     """ Perform crud operations on bucketlist items """
     @validate({'name':{"type":"text"}})
@@ -178,7 +178,7 @@ class BucketListItemCrud(Resource):
             return data, 404
 
 
-@ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>/complete")
+@ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>/complete","/<int:bucketlist_id>/items/<int:bucketlist_item>/complete/")
 class CompleteItem(Resource):
     @authenticate
     def put(self, user, bucketlist_id, bucketlist_item=None, *arg, **kwargs):

@@ -52,7 +52,7 @@ ns = api.namespace(
     "auth", description="Use these endpoints to create user accounts and login into the application")
 
 
-@ns.route("/register")
+@ns.route("/register","/register/")
 class Register(Resource):
     @validate({'first_name': {
         'type': 'text',
@@ -99,7 +99,7 @@ class Register(Resource):
                 return data, 400
 
 
-@ns.route("/login")
+@ns.route("/login","/login/")
 class Login(Resource):
     @validate({'email': {
         'type': 'email'
@@ -129,7 +129,7 @@ class Login(Resource):
             return data, 409
 
 
-@ns.route("/password_reset")
+@ns.route("/password_reset","/password_reset/")
 class ResetPassword(Resource):
     @validate({'old_password':{
               'type':'text'
@@ -158,7 +158,7 @@ class ResetPassword(Resource):
             return data, 400
 
 
-@ns.route("/logout")
+@ns.route("/logout","/logout/")
 class Logout(Resource):
     @authenticate
     @api.marshal_with(logout_response)
