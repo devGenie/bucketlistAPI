@@ -4,35 +4,41 @@ import os
 	specific things to be configured. The app will need these before the it starts
 """
 
+
 class Config(object):
-	"""Parent configuration class"""
-	DEBUG = False
-	CSRF_ENABLED = True
-	SECRET = os.getenv("SECRET")
-	SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    """Parent configuration class"""
+    DEBUG = False
+    CSRF_ENABLED = True
+    SECRET = os.getenv("SECRET")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+
 
 class DevelopmentConfig(Config):
-	"""Configuration for development"""
-	DEBUG = True
+    """Configuration for development"""
+    DEBUG = True
+
 
 class TestingConfig(Config):
-	"""Configurations for testing, this specifies a different test database"""
-	TESTING = True
-	SQLALCHEMY_DATABASE_URI="postgresql://localhost/test_db"
-	DEBUG = True
+    """Configurations for testing, this specifies a different test database"""
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "postgresql://localhost/test_db"
+    DEBUG = True
+
 
 class StagingConfig(Config):
-	"""Configurations for staging"""
-	DEBUG = True
+    """Configurations for staging"""
+    DEBUG = True
+
 
 class ProductionConfig(object):
- 	"""configuration for production"""
- 	DEBUG = False
- 	Testing = False
+    """configuration for production"""
+    DEBUG = False
+    Testing = False
+
 
 app_config = {
- 	'development': DevelopmentConfig,
- 	'testing': TestingConfig,
- 	'staging': StagingConfig,
- 	'production': ProductionConfig
- }	
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'staging': StagingConfig,
+    'production': ProductionConfig
+}
