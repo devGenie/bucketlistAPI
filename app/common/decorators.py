@@ -41,7 +41,7 @@ def validate(params):
                             if not regexp.match(compare):
                                 errors['errors'].append({'value':compare,'field type':key,'message':'Please provide a valid string'})
                             else:
-                                if params[key]['min-length'] and len(compare.strip()) < params[key]['min-length']:
+                                if 'min-length' in params[key] and len(compare.strip()) < params[key]['min-length']:
                                     errors['errors'].append({'value':compare,'field type':key,'message':'Minimum length reached'})
                                     
 
@@ -55,7 +55,7 @@ def validate(params):
                         errors['missing'].append(key)
                 else:
                     errors['missing'].append(key)
-                    
+
             if len(errors['missing'])>0 or len(errors['errors'])>0:
                 return {'status':'failed','message':'Please check your input','errors':errors},400
             else:
