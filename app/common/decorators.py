@@ -5,8 +5,7 @@ from app.models.users import Users as User
 
 
 def authenticate(func):
-    wraps(func)
-
+    @wraps(func)
     def inner_methos(*args, **kwargs):
         if "Authorization" in request.headers:
             token = request.headers.get("Authorization")
@@ -25,8 +24,7 @@ def authenticate(func):
 
 def validate(params):
     def validate_wrapper(func):
-        wraps(func)
-
+        @wraps(func)
         def inner_method(*args, **kwargs):
             """ This method validates user input against a set of requiredninput using regex"""
             errors = {'missing': [], 'errors': []}
