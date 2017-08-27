@@ -106,10 +106,10 @@ class TestBucketListCrud(unittest.TestCase):
         """ Test if a endpoint returns non existing bucketlists """
         retrieved = self.client.get(
             "api/v1/bucketlists/1", headers={"Authorization": self.token})
-        self.assertEqual(retrieved.status_code, 200,
+        self.assertEqual(retrieved.status_code, 404,
                          "Non existing bucket lists have been retrieved")
         self.assertEqual(json.loads(retrieved.data), {
-                         "status": "failed", "message": "No data returned"}, "Non existent records returned")
+                         "status": "failed", "message": "Bucketlist not found"}, "Non existent records returned")
 
     def test_delete_bucketlist(self):
         bucketlist_data = {"name": "bucket1",
