@@ -39,7 +39,7 @@ class TestUserCrud(unittest.TestCase):
         self.assertEqual(duplicate.status_code, 409,
                          "Duplicates are being added to the db")
         self.assertDictEqual(json.loads(duplicate.data), {
-                             "status": "failed", "message": "User registration failed,email already extsis"}, "User registration failed")
+                             "status": "failed", "message": "User registration failed,email already exists"}, "User registration failed")
 
     def test_user_logs_in(self):
         """Test if a user is able to login successfully"""
@@ -54,7 +54,7 @@ class TestUserCrud(unittest.TestCase):
         self.assertEqual(result.status_code, 201, "User not registered")
         login_data = {"email": "jonen55@gmail.com", "password": "256thjuly"}
         login = self.client.post("api/v1/auth/login", data=login_data)
-        self.assertEqual(login.status_code, 409, "User not logged in")
+        self.assertEqual(login.status_code, 404, "User not logged in")
 
     def test_invalid_password(self):
         """Test if a is able to login with an invalid password"""
@@ -62,12 +62,12 @@ class TestUserCrud(unittest.TestCase):
         self.assertEqual(result.status_code, 201, "User not registered")
         login_data = {"email": "jonen54@gmail.com", "password": "258thjuly"}
         login = self.client.post("api/v1/auth/login", data=login_data)
-        self.assertEqual(login.status_code, 409, "User not logged in")
+        self.assertEqual(login.status_code, 401, "User not logged in")
 
     def test_non_existent_user_login(self):
         """Test if a is able to login without an account"""
         login = self.client.post("api/v1/auth/login", data=self.login_data)
-        self.assertEqual(login.status_code, 409, "User not logged in")
+        self.assertEqual(login.status_code, 404, "User not logged in")
 
     def test_user_logs_out(self):
         """Test if a user is able to logout"""
@@ -120,7 +120,7 @@ class TestUserCrud(unittest.TestCase):
         login_after_reset = self.client.post(
             "api/v1/auth/login", data=self.login_data)
         print(login_after_reset.data)
-        self.assertEqual(login_after_reset.status_code, 409,
+        self.assertEqual(login_after_reset.status_code, 401,
                          "Login was successful after reset, password was not reset")
 
     def test_password_reset_after__logs_out(self):
