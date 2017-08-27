@@ -53,10 +53,10 @@ class BucketListItemCrud(Resource):
             else:
                 data = {"status": "failed",
                         "message": "Item not added successfully, Same item exists in the database"}
-                return data, 200
+                return data, 409
         else:
             data = {"status": "failed", "message": "Bucketlist does not exist"}
-            return data, 200
+            return data, 404
 
     @authenticate
     def get(self, user, bucketlist_id, bucketlist_item=None, *arg, **kwargs):
@@ -85,7 +85,7 @@ class BucketListItemCrud(Resource):
                 return data, 200
             else:
                 data = {"status": "failed", "message": "Item not found"}
-                return data, 200
+                return data, 404
         else:
             search_term = request.args.get("q")
             page = 1
@@ -110,13 +110,12 @@ class BucketListItemCrud(Resource):
                             "date_added": item.date_added.strftime("%b/%d/%y"),
                             "date_completed": str(item.date_completed),
                             "complete_status": item.complete_status} for item in bucketlists]
-                print(results)
                 data = {"status": "success",
                         "message": "Items retrieved successfully", "data": results}
                 return data, 200
             else:
                 data = {"status": "failed", "message": "Items not retrieved"}
-                return data, 200
+                return data, 404
 
     @validate({'name':{'type':'text'}})
     @authenticate
@@ -151,7 +150,7 @@ class BucketListItemCrud(Resource):
                     return data, 200
             else:
                 data = {"status": "failed", "message": "Item not found"}
-                return data, 200
+                return data, 404
 
         else:
             data = {"status": "failed", "message": "Resource not found"}
@@ -172,7 +171,7 @@ class BucketListItemCrud(Resource):
                 return data, 200
             else:
                 data = {"status": "failed", "message": "Item does not exist"}
-                return data, 200
+                return data, 404
         else:
             data = {"status": "Failed", "message": "Resource not found"}
             return data, 404
@@ -212,7 +211,7 @@ class CompleteItem(Resource):
                     return data, 200
             else:
                 data = {"status": "failed", "message": "Item not found"}
-                return data, 200
+                return data, 404
 
         else:
             data = {"status": "failed", "message": "Resource not found"}
