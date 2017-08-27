@@ -2,8 +2,6 @@ from app.restplus import api
 from flask_restplus import Resource
 from app.models.users import Users as Users
 from app.models.bucketlists import Bucketlists
-from app.models.bucketlistItems import BucketlistItems
-from app.database import db
 from app.common .decorators import authenticate, validate
 from flask import request
 
@@ -38,7 +36,7 @@ class BucketListCrud(Resource):
         else:
             data = {"status": "failed",
                     "message": "Bucketlist not added, bucketlist with same name exists"}
-            return data, 200
+            return data, 409
 
     @authenticate
     def get(self, user, bucketlist_id=None, *arg, **kwargs):
@@ -76,8 +74,8 @@ class BucketListCrud(Resource):
             data = {"status": "success", "data": results}
             return data, 200
         else:
-            data = {"status": "failed", "message": "No data returned"}
-            return data, 200
+            data = {"status": "failed", "message": "Bucketlist not found"}
+            return data, 404
 
     @authenticate
     def put(self, user, bucketlist_id=None, *arg, **kwargs):
@@ -100,11 +98,11 @@ class BucketListCrud(Resource):
             else:
                 data = {"status": "failed",
                         "message": "No bucketlist provided"}
-                return data, 200
+                return data, 404
 
         else:
             data = {"status": "failed", "message": "No bucketlist provided"}
-            return data, 200
+            return data, 404
 
     @authenticate
     def delete(self, user, bucketlist_id=None, *arg, **kwargs):
