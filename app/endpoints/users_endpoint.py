@@ -81,7 +81,7 @@ class Register(Resource):
             User.email == my_email)).scalar()
         if exists:
             data = {"status": "failed",
-                    "message": "User registration failed,email already extsis"}
+                    "message": "User registration failed,email already exists"}
             return data, 409
         else:
             first_name = request.data['first_name']
@@ -123,10 +123,10 @@ class Login(Resource):
                 return data, 202
             else:
                 data = {"status": "failed", "message": "Login failed"}
-                return data, 409
+                return data, 401
         else:
             data = {"status": "failed", "message": "Login failed"}
-            return data, 409
+            return data, 404
 
 
 @ns.route("/password_reset","/password_reset/")
