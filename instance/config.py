@@ -1,8 +1,9 @@
-import os
 """ This is the configuration file which sets environment specific things
-	such as test mode, debug mode, secret key since each environment needs
-	specific things to be configured. The app will need these before the it starts
+    such as test mode, debug mode, secret key since each environment needs
+    specific things to be configured. The app will need these before the it starts
 """
+
+import os
 
 
 class Config(object):
