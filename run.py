@@ -1,10 +1,10 @@
+""" This module defines the application's start point"""
 import os
 from app import create_app
 
-""" This module defines the application's start point"""
+# loads the configuration name from the environment variable
+config_name = os.getenv('APP_SETTINGS')
+app = create_app(config_name)
 
-config_name=os.getenv('APP_SETTINGS') #loads the configuration name from the environment variable
-app=create_app(config_name)
-
-if __name__=='__main__':
-	app.run() 
+if __name__ == '__main__':
+    app.run()
