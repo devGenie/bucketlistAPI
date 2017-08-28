@@ -22,11 +22,11 @@ $ workon bucketlist
 ```
 **Install the requirements**
 
-```	
+``` 
 $ pip install requirements.txt
 ```
 
-OR
+**OR**
 
 ```
 $ pip install --upgrade -r requirements.txt
@@ -101,16 +101,16 @@ Remember to replace `name` with the name you've chosen (e.g. `bozena_maria`).  T
 Great - that's databases all sorted!
 
 
-Set the flask application environment variables
+**Set the flask application environment variables**
 
 ```
 $ export FLASK_APP=run.py
 $ export SECRET=opensasame
 $ export APP_SETTINGS=development
-$ export DATABASE_URL=postgresql:///localhost/bucketlist
+$ export DATABASE_URL=postgresql://localhost/bucketlist
 ```
 
-Run migrations on
+**Run database migrations**
 ```
     python manage.py db init
     python manage.py db migrate
@@ -118,7 +118,7 @@ Run migrations on
 
 ```
 
-Run tests
+**Run tests**
 
 ```
     nosetests --cover-package=app.endpoints
@@ -126,7 +126,7 @@ Run tests
 
 The documentation can be found [here](https://bucketapi.herokuapp.com/api/v1)
 
-run the flask server
+**run the flask server**
 
 ```
 $ flask run
