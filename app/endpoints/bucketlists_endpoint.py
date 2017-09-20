@@ -48,7 +48,7 @@ class BucketListCrud(Resource):
             bucketlist = Bucketlists.query.filter_by(
                 id=bucketlist_id, user=user.id).first()
             if bucketlist:
-                results = {"id": bucketlist.id, "name": bucketlist.name,
+                results['results'] = {"id": bucketlist.id, "name": bucketlist.name,
                            "description": bucketlist.description}
         else:
             search_term = request.args.get("q")
