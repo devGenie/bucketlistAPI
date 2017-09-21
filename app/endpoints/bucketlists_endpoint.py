@@ -43,13 +43,14 @@ class BucketListCrud(Resource):
         """
                 Fetch either a bucket list or a list of bucketlists
         """
-        results = {"results":[],"next":"Not available","previous":"Not available","pages":1,"current":1}
+        results = {"results": [], "next": "Not available",
+                   "previous": "Not available", "pages": 1, "current": 1}
         if bucketlist_id:
             bucketlist = Bucketlists.query.filter_by(
                 id=bucketlist_id, user=user.id).first()
             if bucketlist:
                 results['results'] = {"id": bucketlist.id, "name": bucketlist.name,
-                           "description": bucketlist.description}
+                                      "description": bucketlist.description}
         else:
             search_term = request.args.get("q")
             bucketlists = None
@@ -61,37 +62,43 @@ class BucketListCrud(Resource):
                 items_per_page = int(request.args.get("pagesize"))
             if search_term:
                 bucketlists = Bucketlists.query.select_from(Users).join(Users.bucketlists).filter(
-                Bucketlists.user == user.id, Bucketlists.name.match(search_term)).paginate(
-                page, items_per_page, False);
+                    Bucketlists.user == user.id, Bucketlists.name.match(search_term)).paginate(
+                    page, items_per_page, False)
 
             else:
                 bucketlists = Bucketlists.query.select_from(Users).join(Users.bucketlists).filter(
                     Bucketlists.user == user.id).paginate(page, items_per_page, False)
 
             if bucketlists:
-                results['results']= [{"id": item.id, "name": item.name,
-                            "description": item.description} for item in bucketlists.items]
-                pages= round(bucketlists.total/items_per_page)
+                results['results'] = [{"id": item.id, "name": item.name,
+                                       "description": item.description} for item in bucketlists.items]
 
-                if pages>0:
-                    results['pages']=pages
+                if bucketlists.total % items_per_page>0:
+                    pages = 1+int((bucketlists.total / items_per_page))
+                else:
+                    pages = int((bucketlists.total / items_per_page))
+
+                if pages > 0:
+                    results['pages'] = pages
 
                 if bucketlists.has_next:
-                    results["next"] = "/api/v1/bucketlists?page={}&pagesize={}".format(bucketlists.next_num,items_per_page)
+                    results["next"] = "/api/v1/bucketlists?page={}&pagesize={}".format(
+                        bucketlists.next_num, items_per_page)
 
                 if bucketlists.has_prev:
-                    results["prev"] = "/api/v1/bucketlists?page={}&pagesize={}".format(bucketlists.prev_num,items_per_page)
+                    results["prev"] = "/api/v1/bucketlists?page={}&pagesize={}".format(
+                        bucketlists.prev_num, items_per_page)
 
-                results["current"] = "/api/v1/bucketlists?page={}&pagesize={}".format(bucketlists.page,items_per_page)
-
+                results["current"] = "/api/v1/bucketlists?page={}&pagesize={}".format(
+                    bucketlists.page, items_per_page)
 
         if results['results']:
             data = {"status": "success",
                     "data": results["results"],
                     "page": results["current"],
-                    "pages":results["pages"],
-                    "next":results["next"],
-                    "previous":results["previous"]}
+                    "pages": results["pages"],
+                    "next": results["next"],
+                    "previous": results["previous"]}
             return data, 200
         else:
             data = {"status": "failed", "message": "Bucketlist not found"}
