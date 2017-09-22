@@ -2,36 +2,40 @@ from app.restplus import api
 from flask_restplus import Resource
 from app.models.bucketlists import Bucketlists
 from app.models.bucketlistItems import BucketlistItems
-from app.endpoints.users_endpoint import authenticate
 from flask_restplus import fields
 from flask import request
 from app.common .decorators import authenticate, validate
 
 item_fields = api.model('Items', {
-    'name': fields.String(example="Hello World", description='The unique identifier of a blog post')
+    'name': fields.String(example="Hello World",
+                          description='The unique identifier of a blog post')
 })
 
 items_returned = api.model("Items Responses", {
     'id': fields.Integer(required=True, description='Id of the created item'),
     'name': fields.String(required=True, description='Name of the item'),
-    'date_added': fields.String(required=True, description="Date Item was added"),
-    'date_completed': fields.String(required=True, description="Date item was completed")
+    'date_added': fields.String(required=True,
+                                description="Date Item was added"),
+    'date_completed': fields.String(required=True,
+                                    description="Date item was completed")
 })
 
-ns = api.namespace(
-    "bucketlists", description="Use these endpoints to manipulate bucketlist item data")
+ns = api.namespace("bucketlists",
+                   description="Use these endpoints to manipulate bucketlist item data")
 
 
-@ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>", "/<int:bucketlist_id>/items/<int:bucketlist_item>/","/<int:bucketlist_id>/items/")
+@ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>",
+          "/<int:bucketlist_id>/items/<int:bucketlist_item>/",
+          "/<int:bucketlist_id>/items/")
 class BucketListItemCrud(Resource):
     """ Perform crud operations on bucketlist items """
-    @validate({'name':{"type":"text"}})
+    @validate({'name': {"type": "text"}})
     @authenticate
     def post(self, user, bucketlist_id, *arg, **kwargs):
         """
-                 Add items to a bucketlist 
-
-                 To perform this, one needs to be authenticated. Pass the auth token recieved in the login response body
+                 Add items to a bucketlist
+                 To perform this, one needs to be authenticated.
+                 Pass the auth token recieved in the login response body
                  as Authorization header in order to continue with this process
         """
 
@@ -89,35 +93,62 @@ class BucketListItemCrud(Resource):
         else:
             search_term = request.args.get("q")
             page = 1
-            items_per_page = 10
+            items_per_page = 3
             if request.args.get("page"):
                 page = int(request.args.get("page"))
             if request.args.get("pagesize"):
                 items_per_page = int(request.args.get("pagesize"))
 
             bucketlists = None
+            results = {"results": [], "next": "Not available",
+                       "previous": "Not available", "pages": 1, "current": 1}
+
             if search_term:
                 search = "%{}%".format(search_term)
                 bucketlists = BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(
-                    Bucketlists.user == user.id, Bucketlists.id == bucketlist_id, BucketlistItems.name.ilike(search)).paginate(page, items_per_page).items
+                    Bucketlists.user == user.id, Bucketlists.id == bucketlist_id, BucketlistItems.name.ilike(search)).paginate(page, items_per_page)
             else:
                 bucketlists = BucketlistItems.query.select_from(Bucketlists).join(Bucketlists.items).filter(
-                    Bucketlists.user == user.id, Bucketlists.id == bucketlist_id).paginate(page, items_per_page).items
+                    Bucketlists.user == user.id, Bucketlists.id == bucketlist_id).paginate(page, items_per_page)
 
-            if bucketlists:
-                results = [{"id": item.id,
-                            "name": item.name,
-                            "date_added": item.date_added.strftime("%b/%d/%y"),
-                            "date_completed": str(item.date_completed),
-                            "complete_status": item.complete_status} for item in bucketlists]
+            if bucketlists.items:
+                results['results'] = [{"id": item.id,
+                                       "name": item.name,
+                                       "date_added": item.date_added.strftime("%b/%d/%y"),
+                                       "date_completed": str(item.date_completed),
+                                       "complete_status": item.complete_status} for item in bucketlists.items]
+
+                if bucketlists.total % items_per_page > 0:
+                    pages = 1 + int((bucketlists.total / items_per_page))
+                else:
+                    pages = int((bucketlists.total / items_per_page))
+
+                if pages > 0:
+                    results['pages'] = pages
+
+                if bucketlists.has_next:
+                    results["next"] = "/api/v1/bucketlists/{}/items/?page={}&pagesize={}".format(bucketlist_id,
+                                                                                                 bucketlists.next_num, items_per_page)
+                if bucketlists.has_prev:
+                    results["previous"] = "/api/v1/bucketlists/{}/items/?page={}&pagesize={}".format(bucketlist_id,
+                                                                                                 bucketlists.prev_num, items_per_page)
+
+                results["current"] = "/api/v1/bucketlists/{}/items/?page={}&pagesize={}".format(bucketlist_id,
+                                                                                                bucketlists.page, items_per_page)
+
                 data = {"status": "success",
-                        "message": "Items retrieved successfully", "data": results}
+                        "message": "Items retrieved successfully",
+                        "data": results['results'],
+                        "page": results["current"],
+                        "pages": results["pages"],
+                        "next": results["next"],
+                        "previous": results["previous"]}
                 return data, 200
             else:
                 data = {"status": "failed", "message": "Items not retrieved"}
                 return data, 404
 
-    @validate({'name':{'type':'text'}})
+    @validate({'name': {'type': 'text'}})
     @authenticate
     def put(self, user, bucketlist_id, bucketlist_item=None, *arg, **kwargs):
         """ This end point edits the bucket list item specified in the url
@@ -177,7 +208,7 @@ class BucketListItemCrud(Resource):
             return data, 404
 
 
-@ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>/complete","/<int:bucketlist_id>/items/<int:bucketlist_item>/complete/")
+@ns.route("/<int:bucketlist_id>/items/<int:bucketlist_item>/complete", "/<int:bucketlist_id>/items/<int:bucketlist_item>/complete/")
 class CompleteItem(Resource):
     @authenticate
     def put(self, user, bucketlist_id, bucketlist_item=None, *arg, **kwargs):
