@@ -17,7 +17,7 @@ pipeline {
         
         stage('Test'){
             steps{
-                sh 'nosetests'
+                sh 'nosetests tests'
             }
         }
     }
