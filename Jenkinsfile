@@ -8,6 +8,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
+                properties([pipelineTriggers([[$class: 'GitHubPushTrigger'], pollSCM('H/15 * * * *')])])
                 echo 'cloning github repository'
                 checkout scm
                 echo 'Install project requirements'
