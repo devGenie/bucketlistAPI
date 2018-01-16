@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                echo 'cloning github repository'
+                echo 'cloning github repo'
                 checkout scm
                 echo 'Install project requirements'
                 sh 'pip install -r requirements.txt'
