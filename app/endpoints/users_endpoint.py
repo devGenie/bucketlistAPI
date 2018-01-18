@@ -174,7 +174,7 @@ class Logout(Resource):
             return data, 400
 
 
-@ns.route("/logout_trial", "/logout_trial/")
+@ns.route("/logout_trial_demo", "/logout_trial_demo/")
 class Logout_trial(Resource):
     @authenticate
     @api.marshal_with(logout_response)
