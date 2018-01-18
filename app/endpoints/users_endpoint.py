@@ -172,19 +172,3 @@ class Logout(Resource):
         else:
             data = {"status": "failed", "message": "Logged out failed"}
             return data, 400
-
-
-@ns.route("/logout_trial_demo", "/logout_trial_demo/")
-class Logout_trial(Resource):
-    @authenticate
-    @api.marshal_with(logout_response)
-    def get(self, token, *arg, **kwargs):
-        """Log user out of the application"""
-        blacklist = BlackList(token)
-        blacklist.save()
-        if blacklist.id:
-            data = {"status": "success", "message": "Logged out successfully"}
-            return data, 200
-        else:
-            data = {"status": "failed", "message": "Logged out failed"}
-            return data, 400
