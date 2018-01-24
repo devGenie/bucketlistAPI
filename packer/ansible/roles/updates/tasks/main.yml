@@ -1,0 +1,45 @@
+- name: ensure locales is installed
+  apt:
+    pkg: locales
+    state: latest
+
+- name: ensure language packages are installed 
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+  with_items: "{{ locale_language_packs }}"
+  register: locale_languages
+    
+# Configure locales
+- name: Ensure dpkg is reconfigured
+  command: dpkg-reconfigure locales
+  when: locale_languages.changed
+
+- name:  detect local configuration file
+  stat: path={{ locale_config_path }}
+  register: locale_configuration
+
+
+- name: ensure locale configuration file is created
+  file: path={{ locale_config_path }} state=touch
+  when: not locale_configuration.stat.exists
+
+- name: Add postgress signing key
+  apt_key:
+    id: ACCC4CF8
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Add postgress to the repostory
+  apt_repository:
+    repo:  deb http://apt.postgresql.org/pub/repos/apt/ lsb_release -cs-pgdg main
+
+- name: Update system
+  apt:
+    update_cache: yes
+
+- name: Upgrade installed packages
+  apt:
+    upgrade: dist
+
+
