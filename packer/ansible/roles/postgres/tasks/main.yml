@@ -1,0 +1,8 @@
+- name: Install postgres
+  apt:
+    name: postgresql-9.5
+    update_cache: yes
+
+- name: Install client
+  apt:
+    name: postgresql-contrib
