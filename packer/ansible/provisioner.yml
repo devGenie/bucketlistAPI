@@ -1,0 +1,11 @@
+- hosts: all
+  user: ubuntu
+  become: true
+  vars:
+    ansible_python_interpreter: "/usr/bin/python3"
+  roles:
+    - updates
+    - python
+    - git
+    - gunicorn
+    - nginx
