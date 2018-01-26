@@ -1,0 +1,39 @@
+- name: Install runtime libraries
+  shell: "{{ item }}"
+  with_items:
+    - source {{ virtual_env_path }} && mkvirtualenv bucketlistAPI
+    - pip install -r /var/webapp/bucketlistAPI/requirements.txt
+  args:
+    executable: /bin/bash
+
+- name: run migrations
+  command: python manage.py db {{ item }}
+  with_items:
+    - upgrade
+    - migrate
+  args:
+    chdir: /var/webapp/bucketlistAPI
+  environment:
+    APP_SETTINGS: production
+    DATABASE_URL: postgresql://postgres@localhost:5432/bucketlist
+    SECRET: abbracadabra
+
+- name: Create gunicorn script
+  template:
+    src: templates/gunicorn.conf
+    dest: /var/webapp/bucketlistAPI/start_gunicorn.sh
+  
+- name: Change file permisions
+  shell: chmod a+x /var/webapp/bucketlistAPI/start_gunicorn.sh
+
+- name: Create system deamon
+  template:
+    src: templates/bucketlist.conf
+    dest: /etc/systemd/system/bucketlist.service
+
+- name: Activate daemon
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl enable bucketlist.service
+    - systemctl start bucketlist.service
