@@ -1,9 +1,13 @@
 - name: ensure locales is installed
+  become: true
+  become_user: root
   apt:
     pkg: locales
     state: latest
 
 - name: ensure language packages are installed 
+  become: true
+  become_user: root
   apt:
     pkg: "{{ item }}"
     state: latest
@@ -32,11 +36,10 @@
 
 - name: Add postgress to the repostory
   apt_repository:
-    repo:  deb http://apt.postgresql.org/pub/repos/apt/ lsb_release -cs-pgdg main
+    repo:  deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
 
 - name: Update system
-  apt:
-    update_cache: yes
+  shell: apt-get update
 
 - name: Upgrade installed packages
   apt:
