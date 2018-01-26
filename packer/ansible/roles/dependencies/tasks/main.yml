@@ -1,0 +1,33 @@
+- name: setup tools
+  apt:
+    name: python-setuptools
+
+- name: Download get-pip.py
+  get_url: url=https://bootstrap.pypa.io/get-pip.py
+           dest=/tmp/get-pip.py
+
+- name: install pip
+  command: python get-pip.py pip==9.0
+  args:
+    chdir: /tmp
+
+- name: install virtual envwrapper
+  command: pip install virtualenvwrapper
+
+- name: install psycopg2
+  apt:
+    name: python3-psycopg2
+
+- name: create postgresql database 
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: bucketlist
+
+- name: configure virtual env
+  command: which virtualenvwrapper.sh
+  register: virtual_env_path
+
+- name: set virtualenv variable
+  set_fact:
+    virtual_env_path: "{{ virtual_env_path.stdout }}"
