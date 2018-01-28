@@ -5,7 +5,7 @@ resource "aws_security_group" "API" {
     }
 
     description = "Only HTTP connections inbound"
-    vpc-id = "${aws_vpc.terraformmain.id}"
+    vpc_id = "${aws_vpc.terraformmain.id}"
 
     ingress {
         from_port = 80
