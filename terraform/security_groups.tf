@@ -1,5 +1,5 @@
-rsource "aws_security_group" "API" {
-    name = "FrontEnd"
+resource "aws_security_group" "API" {
+    name = "API"
     tags {
         Name = "API"
     }
