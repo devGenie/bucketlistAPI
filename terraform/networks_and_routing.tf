@@ -30,3 +30,14 @@ data "aws_availability_zones" "available" {}
          Name = "Bucketlist Open ACL"
      }
  }
+
+ resource "aws_route_table" "public" {
+     vpc_id = "${aws_vpc.terraformmain.id}"
+     tags {
+         Name = "Public"
+     }
+     route {
+         cidr_block = "0.0.0.0/0"
+         gateway_id = "${aws_internet_gateway}"
+     }
+ }
