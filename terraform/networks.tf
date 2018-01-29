@@ -1,5 +1,7 @@
 provider "aws" {
     region = "${var.region}"
+    access_key = "${var.secret_id}"
+    secret_key = "${var.secret_key}"
 }
 
 resource "aws_vpc" "terraformmain" {
