@@ -17,6 +17,9 @@ variable "Subnet-private" {
     description = "Private subnet"
 }
 
+variable "secret_id" {}
+variable "secret_key" {}
+
 data "aws_ami" "bucketlist_image" {
     most_recent = true
 
