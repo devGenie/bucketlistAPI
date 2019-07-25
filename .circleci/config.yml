@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  build_and_test:
+    working_directory: /tmp/ci/
+    docker:
+    - image: circleci/python:3.6.4
+      environment:
+        PGHOST: 127.0.0.1
+        PGUSER: postgres
+    - image: circleci/postgres:9.6.5
+    steps:
+      - checkout
+      - run:
+          command: |
+            sudo apt-get install software-properties-common
+            sudo apt-get update
+            sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main"
+            wget https://www.postgresql.org/media/keys/ACCC4CF8.asc 
+            sudo apt-key add ACCC4CF8.asc
+            sudo apt-get update
+            sudo apt-get install postgresql-client-9.6
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Run tests
+          command: |
+            pip install -r requirements.txt --user circleci
+            sudo pip install nose
+            psql -c 'create database test_db;' -U postgres
+            nosetests tests --with-cover --cover-package=app.endpoints
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+    - build_and_test
